@@ -1,0 +1,31 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 커스텀 스타일 */
+html { 
+  scroll-behavior: smooth; 
+}
+
+/* 모바일에서 강제 한줄 표시 */
+.mobile-single-line {
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+@media (max-width: 640px) {
+  .mobile-single-line {
+    font-size: 2rem !important;
+    line-height: 2.5rem !important;
+    max-width: 100vw !important;
+    display: block !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .mobile-single-line {
+    font-size: 1.75rem !important;
+    line-height: 2.2rem !important;
+  }
+}

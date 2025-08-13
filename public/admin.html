@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>이벤트 관리 - PO+PLE</title>
+  
+  <!-- Open Graph Meta Tags -->
+  <meta property="og:title" content="PO+PLE - 올인원 포커 플랫폼" />
+  <meta property="og:description" content="포플(PO+PLE)은 위치 기반 홀덤펍 검색부터 포커 핸드 리뷰, 전략 공유, 커뮤니티 토론까지 한 곳에서 제공합니다. 전국 대회 일정, 실시간 통계 분석, 클락 기능, AI 포커 어시스턴트까지 갖춘 올인원 포커 플랫폼에서 더 빠르게 배우고, 더 깊이 즐기세요." />
+  <meta property="og:image" content="https://pokerplayer.replit.app/SNSOGIMAGE.png" />
+  <meta property="og:url" content="https://pokerplayer.replit.app/" />
+  <meta property="og:type" content="website" />
+
+  <!-- Twitter Card Meta Tags -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="PO+PLE - 올인원 포커 플랫폼" />
+  <meta name="twitter:description" content="포플(PO+PLE)은 위치 기반 홀덤펍 검색부터 포커 핸드 리뷰, 전략 공유, 커뮤니티 토론까지 한 곳에서 제공합니다. 전국 대회 일정, 실시간 통계 분석, 클락 기능, AI 포커 어시스턴트까지 갖춘 올인원 포커 플랫폼에서 더 빠르게 배우고, 더 깊이 즐기세요." />
+  <meta name="twitter:image" content="https://pokerplayer.replit.app/SNSOGIMAGE.png" />
+  <link rel="icon" type="image/png" href="/favicon.png">
+  <link rel="shortcut icon" href="/favicon.png" type="image/png">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <link rel="stylesheet" href="/styles.css">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet">
+  <style>
+    body{ font-family: Pretendard, system-ui, -apple-system, "Noto Sans KR", Segoe UI, Roboto, Helvetica, Arial, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif; }
+  </style>
+</head>
+<body class="admin-body" style="background: var(--bg-body);">
+  <div class="admin-shell">
+    <!-- 사이드바 -->
+    <aside class="flex flex-col h-screen w-64 sidebar shadow-lg">
+      <!-- 상단 메뉴 영역 -->
+      <div class="flex-1 p-6">
+        <div class="flex items-center gap-3 mb-8">
+          <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background: var(--brand-primary);">
+            <span class="text-white font-black text-lg">P</span>
+          </div>
+          <div>
+            <h1 class="logo text-lg">PO+PLE</h1>
+            <p class="text-sm" style="color: var(--text-muted);">관리자</p>
+          </div>
+        </div>
+        <nav class="space-y-2">
+          <div class="px-3 py-2 text-sm font-medium uppercase tracking-wide" style="color: var(--text-muted);">메뉴</div>
+          <a href="#dashboard" class="flex items-center px-3 py-2 rounded-lg transition-colors" style="color: var(--text-muted);" onmouseover="this.style.background='#F3F4F6'" onmouseout="this.style.background='transparent'">
+            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path>
+            </svg>
+            대시보드
+          </a>
+          <a href="#events" class="flex items-center px-3 py-2 rounded-lg active" onclick="showEventsView()" style="background: rgba(10,132,255,.10); color: var(--brand-primary);">
+            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+            </svg>
+            이벤트 관리
+          </a>
+          <a href="/admin-contacts.html" class="flex items-center px-3 py-2 rounded-lg transition-colors" style="color: var(--text-muted);" onmouseover="this.style.background='#F3F4F6'" onmouseout="this.style.background='transparent'">
+            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+            </svg>
+            문의 관리
+          </a>
+          <a href="/admin/analytics" class="flex items-center px-3 py-2 rounded-lg transition-colors" style="color: var(--text-muted);" onmouseover="this.style.background='#F3F4F6'" onmouseout="this.style.background='transparent'">
+            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 19h16M4 15l4-4 4 4 8-8"></path>
+            </svg>
+            접속 통계
+          </a>
+        </nav>
+      </div>
+      
+      <!-- 하단 로그아웃 버튼 -->
+      <div class="p-6 border-t" style="border-color: var(--line);">
+        <form action="/admin/logout" method="post">
+          <button type="submit" class="w-full flex items-center justify-center px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+            </svg>
+            로그아웃
+          </button>
+        </form>
+      </div>
+    </aside>
+
+    <!-- 메인 컨텐츠 -->
+    <main class="admin-content p-8">
+      <!-- 헤더 -->
+      <header class="mb-8">
+        <h2 id="pageTitle" class="section-title" style="color: var(--text-strong);">이벤트 관리</h2>
+        <p id="pageDescription" class="section-sub mt-2">이벤트를 생성, 수정, 삭제할 수 있습니다.</p>
+      </header>
+
+      <!-- 이벤트 관리 섹션 -->
+      <div id="eventsSection" class="max-w-screen-xl px-6 space-y-6">
+        <!-- 검색 및 필터 -->
+        <div class="w-full bg-white p-6 rounded-lg shadow-sm" style="border: 1px solid var(--line);">
+          <div class="flex flex-wrap gap-2 items-center">
+            <input class="input w-[320px]" placeholder="이벤트 제목으로 검색…" id="searchInput">
+            <select class="select" id="statusFilter">
+              <option value="">전체</option>
+              <option value="published">발행됨</option>
+              <option value="draft">초안</option>
+              <option value="archived">보관</option>
+            </select>
+            <input class="select" type="date" id="fromDate">
+            <span style="color: var(--text-muted);">~</span>
+            <input class="select" type="date" id="toDate">
+            <select class="select" id="sortSelect">
+              <option value="published_at:desc">발행일(최신순)</option>
+              <option value="published_at:asc">발행일(오래된순)</option>
+              <option value="title:asc">제목(가나다순)</option>
+              <option value="start_date:desc">시작일(최신순)</option>
+              <option value="start_date:asc">시작일(이른순)</option>
+            </select>
+            <button class="btn-ghost" onclick="loadEvents()">검색</button>
+            <button class="btn-primary ml-auto" onclick="showCreateModal()">+ 새 이벤트</button>
+          </div>
+        </div>
+
+        <!-- 이벤트 목록 -->
+        <div class="w-full table overflow-hidden" style="border: 1px solid var(--line);">
+          <div class="overflow-x-auto">
+            <table class="min-w-full table-fixed">
+              <colgroup>
+                <col style="width: 80px;">  <!-- 썸네일 -->
+                <col style="width: auto;">  <!-- 제목 -->
+                <col style="width: 160px;"> <!-- 기간 -->
+                <col style="width: 80px;">  <!-- 상태 -->
+                <col style="width: 140px;"> <!-- 발행일 -->
+                <col style="width: 120px;"> <!-- 액션 -->
+              </colgroup>
+              <thead>
+                <tr>
+                  <th class="text-left text-xs font-medium uppercase tracking-wider">썸네일</th>
+                  <th class="text-left text-xs font-medium uppercase tracking-wider">제목</th>
+                  <th class="text-left text-xs font-medium uppercase tracking-wider">기간</th>
+                  <th class="text-left text-xs font-medium uppercase tracking-wider">상태</th>
+                  <th class="text-left text-xs font-medium uppercase tracking-wider">발행일</th>
+                  <th class="text-left text-xs font-medium uppercase tracking-wider">액션</th>
+                </tr>
+              </thead>
+              <tbody id="eventsTableBody">
+                <!-- 동적으로 로드됨 -->
+              </tbody>
+            </table>
+          </div>
+          <!-- 로딩 상태 -->
+          <div id="loadingState" class="flex justify-center items-center py-12">
+            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            <span class="ml-2 text-gray-600">로딩 중...</span>
+          </div>
+          <!-- 빈 상태 -->
+          <div id="emptyState" class="text-center py-12 hidden">
+            <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+            </svg>
+            <p class="text-gray-500 text-lg font-medium mt-4">이벤트가 없습니다</p>
+            <p class="text-gray-400 mt-1">새 이벤트를 생성해보세요</p>
+          </div>
+        </div>
+
+        <!-- 페이지네이션 -->
+        <div id="pagination" class="flex justify-center">
+          <!-- 동적으로 로드됨 -->
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- 이벤트 생성/수정 모달 -->
+  <div id="eventModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden flex justify-center items-center z-50">
+    <div class="bg-white rounded-lg shadow-lg w-full max-w-6xl max-h-[90vh] overflow-hidden">
+      <div class="flex">
+        <!-- 폼 영역 -->
+        <div class="flex-1 p-6 overflow-y-auto">
+          <div class="flex justify-between items-center mb-6">
+            <h3 id="modalTitle" class="text-lg font-semibold text-gray-900">이벤트 작성</h3>
+            <button onclick="hideModal()" class="text-gray-400 hover:text-gray-600">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+              </svg>
+            </button>
+          </div>
+          
+          <form id="eventForm" class="space-y-4">
+            <div class="grid grid-cols-2 gap-4">
+              <div class="col-span-2">
+                <label for="eventTitle" class="block text-sm font-medium text-gray-700 mb-1">제목 *</label>
+                <input type="text" id="eventTitle" required 
+                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+              </div>
+              <div>
+                <label for="eventSlug" class="block text-sm font-medium text-gray-700 mb-1">슬러그(선택)</label>
+                <input type="text" id="eventSlug" placeholder="영문-하이픈"
+                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+              </div>
+              <div>
+                <label for="eventStatus" class="block text-sm font-medium text-gray-700 mb-1">상태</label>
+                <select id="eventStatus" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                  <option value="draft">초안</option>
+                  <option value="published">발행</option>
+                  <option value="archived">보관</option>
+                </select>
+              </div>
+              <div>
+                <label for="eventStartDate" class="block text-sm font-medium text-gray-700 mb-1">시작일 *</label>
+                <input type="date" id="eventStartDate" required
+                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+              </div>
+              <div>
+                <label for="eventEndDate" class="block text-sm font-medium text-gray-700 mb-1">종료일 *</label>
+                <input type="date" id="eventEndDate" required
+                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+              </div>
+              <div>
+                <label for="eventThumbnail" class="block text-sm font-medium text-gray-700 mb-1">썸네일 URL</label>
+                <input type="url" id="eventThumbnail" placeholder="https://..."
+                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+              </div>
+              <div>
+                <label for="eventTags" class="block text-sm font-medium text-gray-700 mb-1">태그</label>
+                <input type="text" id="eventTags" placeholder="태그1,태그2,태그3"
+                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+              </div>
+            </div>
+            <div>
+              <label for="eventContent" class="block text-sm font-medium text-gray-700 mb-1">본문(마크다운) *</label>
+              <textarea id="eventContent" rows="12" required placeholder="마크다운 형식으로 작성하세요..."
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono text-sm"
+                        oninput="updatePreview()"></textarea>
+            </div>
+            <div class="flex justify-end gap-3 pt-4">
+              <button type="button" onclick="hideModal()" class="px-6 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50">
+                취소
+              </button>
+              <button type="submit" id="submitBtn" class="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
+                저장
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- 미리보기 영역 -->
+        <div class="w-1/2 bg-gray-50 border-l p-6 overflow-y-auto">
+          <h4 class="font-semibold text-gray-700 mb-4">미리보기</h4>
+          <div id="preview" class="prose prose-sm max-w-none bg-white p-4 rounded-lg border">
+            <p class="text-gray-500 italic">내용을 입력하면 미리보기가 표시됩니다.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 토스트 알림 -->
+  <div id="toast" class="fixed top-4 right-4 z-50 hidden">
+    <div class="bg-white border rounded-lg shadow-lg p-4 flex items-center max-w-sm">
+      <div id="toastIcon" class="flex-shrink-0 w-5 h-5 mr-3"></div>
+      <p id="toastMessage" class="text-sm font-medium text-gray-900"></p>
+    </div>
+  </div>
+
+  <script src="admin.js"></script>
+  <script src="/js/admin-upload.js"></script>
+</body>
+</html>

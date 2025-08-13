@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>관리자 로그인 - PO+PLE</title>
+  <link rel="icon" href="/favicon.ico">
+  <link rel="stylesheet" href="/styles.css">
+  <meta name="color-scheme" content="light dark">
+</head>
+<body class="login-body">
+  <!-- 배경 장식 -->
+  <div class="login-bg">
+    <div class="orb orb-a"></div>
+    <div class="orb orb-b"></div>
+  </div>
+
+  <main class="login-shell" role="main">
+    <section class="login-card" aria-labelledby="loginTitle">
+      <div class="login-brand">
+        <div class="brand-badge">P</div>
+        <div>
+          <h1 id="loginTitle" class="login-title">관리자 로그인</h1>
+          <p class="login-sub">PO+PLE 이벤트 관리 시스템</p>
+        </div>
+      </div>
+
+      <form id="admin-login-form" class="login-form" method="POST" action="/admin/login">
+        <label class="login-field">
+          <span class="login-label">사용자명</span>
+          <input type="text" name="username" autocomplete="username" required placeholder="아이디를 입력하세요" />
+        </label>
+
+        <label class="login-field">
+          <span class="login-label">비밀번호</span>
+          <div class="password-wrap">
+            <input id="password" type="password" name="password" autocomplete="current-password" required placeholder="비밀번호를 입력하세요" />
+            <button type="button" class="btn-eye" aria-label="비밀번호 보기" title="비밀번호 보기"></button>
+          </div>
+          <span id="capsHint" class="caps-hint" aria-live="polite" hidden>CapsLock이 켜져 있습니다.</span>
+        </label>
+
+        <div class="login-options">
+          <label class="remember">
+            <input type="checkbox" name="remember" value="1" />
+            <span>로그인 상태 유지</span>
+          </label>
+          <a class="help" href="#" onclick="alert('관리자에게 비밀번호 초기화를 요청하세요.'); return false;">도움이 필요하신가요?</a>
+        </div>
+
+        <button class="btn-primary" type="submit">로그인</button>
+
+        <p class="login-note">보안을 위해 공용 PC에서는 로그아웃을 꼭 눌러주세요.</p>
+        <div id="loginError" class="login-error" role="alert" hidden>로그인에 실패했습니다.</div>
+      </form>
+    </section>
+  </main>
+
+  <script>
+    // 포커스
+    const user = document.querySelector('input[name="username"]');
+    if (user) user.focus();
+
+    // 비번 보기 토글
+    const eyeBtn = document.querySelector('.btn-eye');
+    const pw = document.getElementById('password');
+    if (eyeBtn && pw) {
+      eyeBtn.addEventListener('click', () => {
+        const on = pw.getAttribute('type') === 'password' ? 'text' : 'password';
+        pw.setAttribute('type', on);
+        eyeBtn.classList.toggle('on');
+        eyeBtn.setAttribute('aria-label', on === 'password' ? '비밀번호 보기' : '비밀번호 숨기기');
+      });
+      pw.addEventListener('keydown', (e) => {
+        const hint = document.getElementById('capsHint');
+        if (!hint) return;
+        const caps = e.getModifierState && e.getModifierState('CapsLock');
+        hint.hidden = !caps;
+      });
+    }
+
+    // 간단 검증 & 실패 표시 (서버가 401/403일 때)
+    const form = document.getElementById('admin-login-form');
+    form?.addEventListener('submit', async (ev) => {
+      const u = form.username.value.trim();
+      const p = form.password.value.trim();
+      if (!u || !p) {
+        ev.preventDefault();
+        document.getElementById('loginError').textContent = '아이디와 비밀번호를 입력하세요.';
+        document.getElementById('loginError').hidden = false;
+      }
+    });
+  </script>
+</body>
+</html>

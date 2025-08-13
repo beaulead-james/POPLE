@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>접속 통계 - PO+PLE</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="icon" href="/favicon.png"/>
+  <link rel="stylesheet" href="/styles.css">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet">
+  <style>
+    body{ font-family: Pretendard, system-ui, -apple-system, "Noto Sans KR", Segoe UI, Roboto, Helvetica, Arial, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif; }
+  </style>
+</head>
+<body class="admin-body" style="background: var(--bg-body);">
+  <div class="admin-shell">
+    <!-- 좌측 사이드바 -->
+    <aside class="flex flex-col h-screen w-64 sidebar shadow-lg">
+      <!-- 상단 메뉴 영역 -->
+      <div class="flex-1 p-6">
+        <div class="flex items-center gap-3 mb-8">
+          <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background: var(--brand-primary);">
+            <span class="text-white font-black text-lg">P</span>
+          </div>
+          <div>
+            <h1 class="logo text-lg">PO+PLE</h1>
+            <p class="text-sm" style="color: var(--text-muted);">관리자</p>
+          </div>
+        </div>
+        <nav class="space-y-2">
+          <div class="px-3 py-2 text-sm font-medium uppercase tracking-wide" style="color: var(--text-muted);">메뉴</div>
+          <a href="#dashboard" class="flex items-center px-3 py-2 rounded-lg transition-colors" style="color: var(--text-muted);" onmouseover="this.style.background='#F3F4F6'" onmouseout="this.style.background='transparent'">
+            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path>
+            </svg>
+            대시보드
+          </a>
+          <a href="/admin" class="flex items-center px-3 py-2 rounded-lg transition-colors" style="color: var(--text-muted);" onmouseover="this.style.background='#F3F4F6'" onmouseout="this.style.background='transparent'">
+            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+            </svg>
+            이벤트 관리
+          </a>
+          <a href="/admin-contacts.html" class="flex items-center px-3 py-2 rounded-lg transition-colors" style="color: var(--text-muted);" onmouseover="this.style.background='#F3F4F6'" onmouseout="this.style.background='transparent'">
+            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+            </svg>
+            문의 관리
+          </a>
+          <a href="/admin/analytics" class="flex items-center px-3 py-2 rounded-lg active" style="background: rgba(10,132,255,.10); color: var(--brand-primary);">
+            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 19h16M4 15l4-4 4 4 8-8"></path>
+            </svg>
+            접속 통계
+          </a>
+        </nav>
+      </div>
+      
+      <!-- 하단 로그아웃 버튼 -->
+      <div class="p-6 border-t" style="border-color: var(--line);">
+        <form action="/admin/logout" method="post">
+          <button type="submit" class="w-full flex items-center justify-center px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+            </svg>
+            로그아웃
+          </button>
+        </form>
+      </div>
+    </aside>
+
+    <!-- 우측 본문 -->
+    <main class="admin-content p-8">
+      <!-- 헤더 -->
+      <header class="mb-8">
+        <h2 class="section-title" style="color: var(--text-strong);">접속 통계</h2>
+        <p class="section-sub mt-2">웹사이트 방문자 통계와 인기 페이지를 확인할 수 있습니다.</p>
+      </header>
+
+      <div class="max-w-screen-xl space-y-6">
+        <!-- KPI 카드 -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="bg-white p-6 rounded-lg shadow-sm" style="border: 1px solid var(--line);">
+            <div class="text-sm" style="color: var(--text-muted);">오늘 페이지뷰</div>
+            <div id="kpi-pv" class="text-3xl font-bold mt-2" style="color: var(--text-strong);">-</div>
+          </div>
+          <div class="bg-white p-6 rounded-lg shadow-sm" style="border: 1px solid var(--line);">
+            <div class="text-sm" style="color: var(--text-muted);">오늘 방문자수</div>
+            <div id="kpi-uv" class="text-3xl font-bold mt-2" style="color: var(--text-strong);">-</div>
+          </div>
+          <div class="bg-white p-6 rounded-lg shadow-sm" style="border: 1px solid var(--line);">
+            <div class="text-sm" style="color: var(--text-muted);">인기 페이지</div>
+            <div id="kpi-top" class="text-lg font-semibold mt-2 truncate" style="color: var(--text-strong);">-</div>
+          </div>
+        </div>
+
+        <!-- 시계열 차트 -->
+        <section class="bg-white p-6 rounded-lg shadow-sm" style="border: 1px solid var(--line);">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="font-semibold text-lg" style="color: var(--text-strong);">일자별 페이지뷰 & 방문자수</h3>
+            <div class="text-sm" style="color: var(--text-muted);">최근 30일</div>
+          </div>
+          <div style="position: relative; height: 300px;">
+            <canvas id="tsChart"></canvas>
+          </div>
+        </section>
+
+        <!-- 인기 경로 테이블 -->
+        <section class="bg-white p-6 rounded-lg shadow-sm" style="border: 1px solid var(--line);">
+          <h3 class="font-semibold text-lg mb-4" style="color: var(--text-strong);">인기 페이지 TOP 20</h3>
+          <div class="overflow-x-auto">
+            <table class="table w-full">
+              <thead>
+                <tr>
+                  <th class="text-left">페이지 경로</th>
+                  <th class="text-right">페이지뷰</th>
+                  <th class="text-right">방문자수</th>
+                </tr>
+              </thead>
+              <tbody id="top-paths">
+                <tr>
+                  <td colspan="3" class="text-center py-8" style="color: var(--text-muted);">데이터 로딩 중...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    async function fetchData(url) {
+      try {
+        const response = await fetch(url);
+        if (!response.ok) throw new Error('Auth ' + response.status);
+        return response.json();
+      } catch (error) {
+        console.error('API 요청 실패:', error);
+        throw error;
+      }
+    }
+
+    function todayISO() {
+      return new Date().toISOString().slice(0, 10);
+    }
+
+    async function loadAnalytics() {
+      try {
+        // 병렬로 데이터 로드
+        const [ts, top] = await Promise.all([
+          fetchData('/admin/analytics/api/timeseries'),
+          fetchData('/admin/analytics/api/top-paths')
+        ]);
+        
+        // 오늘 요약 데이터
+        const summary = await fetchData('/admin/analytics/api/summary?day=' + todayISO());
+        
+        // KPI 업데이트
+        const todayPv = summary.rows.reduce((a, b) => a + b.pv, 0);
+        const todayUv = summary.rows.reduce((a, b) => a + b.uv, 0);
+        document.getElementById('kpi-pv').textContent = todayPv.toLocaleString();
+        document.getElementById('kpi-uv').textContent = todayUv.toLocaleString();
+        document.getElementById('kpi-top').textContent = (top.rows[0]?.path || '-');
+
+        // 차트 생성
+        const ctx = document.getElementById('tsChart').getContext('2d');
+        new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: ts.rows.map(r => {
+              const date = new Date(r.day);
+              return date.toLocaleDateString('ko-KR', { month: 'short', day: 'numeric' });
+            }),
+            datasets: [
+              {
+                label: '페이지뷰',
+                data: ts.rows.map(r => r.pv),
+                borderColor: 'rgb(10, 132, 255)',
+                backgroundColor: 'rgba(10, 132, 255, 0.1)',
+                fill: true,
+                tension: 0.1
+              },
+              {
+                label: '방문자수',
+                data: ts.rows.map(r => r.uv),
+                borderColor: 'rgb(0, 184, 148)',
+                backgroundColor: 'rgba(0, 184, 148, 0.1)',
+                fill: true,
+                tension: 0.1
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                position: 'top',
+              }
+            },
+            scales: {
+              y: {
+                beginAtZero: true
+              }
+            }
+          }
+        });
+
+        // 인기 경로 테이블 업데이트
+        const tbody = document.getElementById('top-paths');
+        tbody.innerHTML = top.rows.slice(0, 20).map(r => `
+          <tr>
+            <td style="color: var(--text-strong);">${r.path}</td>
+            <td class="text-right font-medium" style="color: var(--text-strong);">${r.pv.toLocaleString()}</td>
+            <td class="text-right font-medium" style="color: var(--text-strong);">${r.uv.toLocaleString()}</td>
+          </tr>
+        `).join('');
+
+      } catch (error) {
+        console.error('Analytics 로드 실패:', error);
+        alert('접근 권한이 없습니다. 관리자 로그인 후 다시 시도하세요.');
+      }
+    }
+
+    // 페이지 로드 시 데이터 로드
+    document.addEventListener('DOMContentLoaded', loadAnalytics);
+  </script>
+</body>
+</html>

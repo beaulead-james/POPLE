@@ -1,0 +1,212 @@
+# === 0) 경로 변수 ===
+ROOT="public"
+ADMIN_HTML="$ROOT/admin.html"
+INDEX_HTML="$ROOT/index.html"
+CONTACT_JS="$ROOT/js/contact.js"
+ADMIN_CONTACTS_HTML="$ROOT/admin-contacts.html"
+SERVER_JS="server.js"
+CONTACTS_FILE="contacts.json"
+
+mkdir -p "$ROOT/js"
+
+# === 1) 프론트: 문의 폼 스크립트 생성 (id="contact-form" 기준, 없으면 안전히 무시) ===
+cat > "$CONTACT_JS" <<'EOF'
+(function(){
+  const form = document.querySelector('#contact-form');
+  if (!form) return;
+
+  const pick = (names) => {
+    for (const n of names) {
+      const el = form.querySelector(`[name="${n}"]`) || form.querySelector(`#${n}`);
+      if (el) return el;
+    }
+    return null;
+  };
+
+  const nameEl = pick(['name','username','contactName']);
+  const emailEl = pick(['email','contactEmail']);
+  const msgEl = pick(['message','content','contactMessage']);
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const payload = {
+      name: nameEl ? nameEl.value.trim() : '',
+      email: emailEl ? emailEl.value.trim() : '',
+      message: msgEl ? msgEl.value.trim() : ''
+    };
+    if (!payload.name || !payload.email || !payload.message) {
+      alert('이름/이메일/내용을 입력해 주세요.');
+      return;
+    }
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      if (!res.ok) throw new Error(await res.text());
+      alert('문의가 접수되었습니다. 빠르게 확인 후 답변드리겠습니다.');
+      form.reset();
+    } catch (err) {
+      console.error(err);
+      alert('문의 접수에 실패했습니다. 잠시 후 다시 시도해 주세요.');
+    }
+  });
+})();
+EOF
+
+# === 2) index.html 에 contact.js 로더 삽입 (중복 방지) ===
+if [ -f "$INDEX_HTML" ]; then
+  grep -q 'js/contact.js' "$INDEX_HTML" || sed -i 's@</body>@  <script src="/js/contact.js"></script>\n</body>@' "$INDEX_HTML"
+fi
+
+# === 3) 관리자: 문의 리스트 전용 페이지 생성 ===
+cat > "$ADMIN_CONTACTS_HTML" <<'EOF'
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>문의 관리 - PO+PLE Admin</title>
+  <link rel="icon" href="/favicon.ico">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body class="admin-body">
+  <div class="admin-shell">
+    <aside class="sidebar p-4 bg-slate-900 text-white">
+      <div class="font-bold text-lg mb-4">관리자 메뉴</div>
+      <nav class="space-y-2">
+        <a href="/admin" class="block p-2 rounded bg-slate-800 hover:bg-slate-700">이벤트 관리</a>
+        <a href="/admin-contacts.html" class="block p-2 rounded bg-indigo-600 hover:bg-indigo-500">문의 관리</a>
+      </nav>
+      <button onclick="location.href='/admin/logout'" class="mt-6 w-full p-2 bg-rose-600 rounded">로그아웃</button>
+    </aside>
+
+    <main class="admin-content p-6">
+      <h1 class="text-2xl font-bold mb-4">문의 관리</h1>
+      <div id="stats" class="mb-4 text-sm text-gray-500"></div>
+      <div class="overflow-auto rounded-lg border border-gray-200">
+        <table class="min-w-full text-sm">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="px-3 py-2 text-left">ID</th>
+              <th class="px-3 py-2 text-left">이름</th>
+              <th class="px-3 py-2 text-left">이메일</th>
+              <th class="px-3 py-2 text-left">내용</th>
+              <th class="px-3 py-2 text-left">등록일</th>
+            </tr>
+          </thead>
+          <tbody id="rows"></tbody>
+        </table>
+      </div>
+
+      <div id="pager" class="mt-4 flex items-center gap-2">
+        <button id="prev" class="px-3 py-2 rounded bg-gray-200">이전</button>
+        <span id="pageInfo" class="text-sm text-gray-600"></span>
+        <button id="next" class="px-3 py-2 rounded bg-gray-200">다음</button>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const PAGE_SIZE = 20;
+    let page = 1, total = 0;
+
+    async function load() {
+      const res = await fetch(\`/admin/api/contacts?page=\${page}&pageSize=\${PAGE_SIZE}\`);
+      if (!res.ok) { alert('목록을 불러오지 못했습니다.'); return; }
+      const data = await res.json();
+      total = data.total;
+      const tb = document.getElementById('rows');
+      tb.innerHTML = '';
+      data.items.forEach(it => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = \`
+          <td class="px-3 py-2">\${it.id}</td>
+          <td class="px-3 py-2">\${it.name}</td>
+          <td class="px-3 py-2">\${it.email}</td>
+          <td class="px-3 py-2 whitespace-pre-wrap">\${it.message}</td>
+          <td class="px-3 py-2">\${new Date(it.created_at).toLocaleString()}</td>\`;
+        tb.appendChild(tr);
+      });
+      const start = (data.page-1)*data.pageSize+1;
+      const end = Math.min(data.page*data.pageSize, total);
+      document.getElementById('stats').textContent = \`총 \${total}건\`;
+      document.getElementById('pageInfo').textContent = \`\${start}-\${end} / \${total}\`;
+      document.getElementById('prev').disabled = (page<=1);
+      document.getElementById('next').disabled = (page*PAGE_SIZE>=total);
+    }
+
+    document.getElementById('prev').onclick = () => { if (page>1){ page--; load(); } };
+    document.getElementById('next').onclick = () => { if (page*PAGE_SIZE<total){ page++; load(); } };
+
+    load();
+  </script>
+</body>
+</html>
+EOF
+
+# === 4) 관리자 기존 사이드바에 '문의 관리' 링크가 없으면 추가 시도(베스트 에포트) ===
+if [ -f "$ADMIN_HTML" ]; then
+  grep -q 'admin-contacts.html' "$ADMIN_HTML" || sed -i '0,/<nav[^>]*>/s//&\n        <a href="\/admin-contacts.html" class="block p-2 rounded bg-slate-800 hover:bg-slate-700">문의 관리<\/a>/' "$ADMIN_HTML"
+fi
+
+# === 5) 서버: 문의 API 추가 (contacts.json 저장) ===
+# - fs/path 선언이 없다면 상단 require 보강
+grep -q "const fs = require('fs')" "$SERVER_JS" || sed -i "1i const fs = require('fs');" "$SERVER_JS"
+grep -q "const path = require('path')" "$SERVER_JS" || sed -i "1i const path = require('path');" "$SERVER_JS"
+
+# - CONTACTS_FILE 상수 및 초기화 코드 주입(존재하면 스킵)
+grep -q "CONTACTS_FILE" "$SERVER_JS" || sed -i "1i const CONTACTS_FILE = path.join(__dirname, 'contacts.json');" "$SERVER_JS"
+
+# - 앱 json 파서가 없으면 추가 (대부분 이미 있음)
+grep -q "app.use(express.json())" "$SERVER_JS" || sed -i "0,/app.use([^)]*);/s//app.use(express.json());\n&/" "$SERVER_JS"
+
+# - 서버 끝쪽에 API 블록 추가
+grep -q "/* CONTACT API START */" "$SERVER_JS" || cat >> "$SERVER_JS" <<'EOF'
+
+// /* CONTACT API START */
+function readContacts() {
+  try {
+    return JSON.parse(fs.readFileSync(CONTACTS_FILE, 'utf-8'));
+  } catch (e) {
+    return [];
+  }
+}
+function writeContacts(list) {
+  fs.writeFileSync(CONTACTS_FILE, JSON.stringify(list, null, 2));
+}
+// 파일 초기화
+if (!fs.existsSync(CONTACTS_FILE)) writeContacts([]);
+
+app.post('/api/contact', (req, res) => {
+  const { name, email, message } = req.body || {};
+  if (!name || !email || !message) {
+    return res.status(400).send('name, email, message는 필수입니다.');
+  }
+  const list = readContacts();
+  const id = list.length ? list[list.length-1].id + 1 : 1;
+  const item = { id, name, email, message, created_at: Date.now() };
+  list.push(item);
+  writeContacts(list);
+  res.json({ ok: true, id });
+});
+
+app.get('/admin/api/contacts', (req, res) => {
+  // TODO: 실제 운영에서는 관리자 세션 체크 미들웨어로 보호 필요
+  const page = Math.max(1, parseInt(req.query.page || '1', 10));
+  const pageSize = Math.max(1, Math.min(100, parseInt(req.query.pageSize || '20', 10)));
+  const list = readContacts().sort((a,b)=>b.created_at - a.created_at);
+  const start = (page-1)*pageSize;
+  const items = list.slice(start, start+pageSize);
+  res.json({ page, pageSize, total: list.length, items });
+});
+// /* CONTACT API END */
+EOF
+
+# - 빈 데이터 파일 생성(없으면)
+[ -f "$CONTACTS_FILE" ] || echo "[]" > "$CONTACTS_FILE"
+
+echo "✅ 문의하기 기능 적용 완료"
+echo "   - 사용자: #contact-form 제출 시 /api/contact 로 저장"
+echo "   - 관리자: /admin-contacts.html 에서 목록 확인(페이지네이션)"

@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>문의 관리 - PO+PLE Admin</title>
+  <link rel="icon" href="/favicon.png">
+  <link rel="stylesheet" href="/styles.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet">
+  <style>
+    body{ font-family: Pretendard, system-ui, -apple-system, "Noto Sans KR", Segoe UI, Roboto, Helvetica, Arial, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif; }
+  </style>
+</head>
+<body class="admin-body" style="background: var(--bg-body);">
+  <div class="admin-shell">
+    <!-- 사이드바 -->
+    <aside class="flex flex-col h-screen w-64 sidebar shadow-lg">
+      <!-- 상단 메뉴 영역 -->
+      <div class="flex-1 p-6">
+        <div class="flex items-center gap-3 mb-8">
+          <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background: var(--brand-primary);">
+            <span class="text-white font-black text-lg">P</span>
+          </div>
+          <div>
+            <h1 class="logo text-lg">PO+PLE</h1>
+            <p class="text-sm" style="color: var(--text-muted);">관리자</p>
+          </div>
+        </div>
+        <nav class="space-y-2">
+          <div class="px-3 py-2 text-sm font-medium uppercase tracking-wide" style="color: var(--text-muted);">메뉴</div>
+          <a href="#dashboard" class="flex items-center px-3 py-2 rounded-lg transition-colors" style="color: var(--text-muted);" onmouseover="this.style.background='#F3F4F6'" onmouseout="this.style.background='transparent'">
+            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path>
+            </svg>
+            대시보드
+          </a>
+          <a href="/admin" class="flex items-center px-3 py-2 rounded-lg transition-colors" style="color: var(--text-muted);" onmouseover="this.style.background='#F3F4F6'" onmouseout="this.style.background='transparent'">
+            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+            </svg>
+            이벤트 관리
+          </a>
+          <a href="/admin-contacts.html" class="flex items-center px-3 py-2 rounded-lg active" style="background: rgba(10,132,255,.10); color: var(--brand-primary);">
+            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+            </svg>
+            문의 관리
+          </a>
+        </nav>
+      </div>
+      
+      <!-- 하단 로그아웃 버튼 -->
+      <div class="p-6 border-t" style="border-color: var(--line);">
+        <form action="/admin/logout" method="post">
+          <button type="submit" class="w-full flex items-center justify-center px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+            </svg>
+            로그아웃
+          </button>
+        </form>
+      </div>
+    </aside>
+
+    <!-- 메인 콘텐츠 -->
+    <main class="admin-content flex-1 p-6 overflow-y-auto">
+      <!-- 상단 헤더 -->
+      <div class="flex items-center justify-between mb-8">
+        <div>
+          <h1 class="text-3xl font-black" style="color: var(--text-primary);">문의 관리</h1>
+          <p class="text-sm mt-2" style="color: var(--text-muted);">사용자들의 문의사항을 확인하고 관리하세요</p>
+        </div>
+      </div>
+
+      <!-- 통계 카드 -->
+      <div id="stats-container" class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div class="bg-white rounded-2xl p-6 border" style="border-color: var(--line);">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background: rgba(10,132,255,0.1);">
+              <svg class="w-5 h-5" style="color: var(--brand-primary);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+              </svg>
+            </div>
+            <div>
+              <div class="text-sm" style="color: var(--text-muted);">총 문의</div>
+              <div id="total-contacts" class="text-2xl font-bold" style="color: var(--brand-primary);">0건</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 문의 테이블 -->
+      <div class="bg-white rounded-2xl border overflow-hidden" style="border-color: var(--line);">
+        <div class="p-6 border-b" style="border-color: var(--line);">
+          <h3 class="text-lg font-bold" style="color: var(--text-primary);">문의 목록</h3>
+        </div>
+        
+        <div class="overflow-x-auto">
+          <table class="w-full">
+            <thead>
+              <tr class="bg-gray-50/50">
+                <th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider" style="color: var(--text-muted);">ID</th>
+                <th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider" style="color: var(--text-muted);">이름</th>
+                <th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider" style="color: var(--text-muted);">이메일</th>
+                <th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider" style="color: var(--text-muted);">내용</th>
+                <th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider" style="color: var(--text-muted);">등록일</th>
+              </tr>
+            </thead>
+            <tbody id="contacts-tbody" class="divide-y" style="border-color: var(--line);">
+              <!-- 문의 목록이 여기에 로드됩니다 -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 페이지네이션 -->
+      <div class="flex items-center justify-between mt-8">
+        <div class="flex items-center gap-3">
+          <button id="prev-btn" class="btn-ghost" disabled>이전</button>
+          <span id="page-info" class="text-sm" style="color: var(--text-muted);">0 / 0</span>
+          <button id="next-btn" class="btn-ghost" disabled>다음</button>
+        </div>
+        <div class="text-sm" style="color: var(--text-muted);">
+          페이지당 20개 표시
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const PAGE_SIZE = 20;
+    let currentPage = 1;
+    let totalContacts = 0;
+
+    async function loadContacts() {
+      try {
+        const response = await fetch(`/admin/api/contacts?page=${currentPage}&pageSize=${PAGE_SIZE}`);
+        if (!response.ok) {
+          throw new Error('문의 목록을 불러올 수 없습니다.');
+        }
+        
+        const data = await response.json();
+        totalContacts = data.total;
+        
+        // Update stats
+        document.getElementById('total-contacts').textContent = `${totalContacts}건`;
+        
+        // Update table
+        const tbody = document.getElementById('contacts-tbody');
+        tbody.innerHTML = '';
+        
+        if (data.items.length === 0) {
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="5" class="px-6 py-12 text-center" style="color: var(--text-muted);">
+                <div class="flex flex-col items-center gap-3">
+                  <svg class="w-12 h-12 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                  </svg>
+                  <div class="text-lg font-medium">문의가 없습니다</div>
+                  <div class="text-sm opacity-70">새로운 문의가 접수되면 여기에 표시됩니다</div>
+                </div>
+              </td>
+            </tr>
+          `;
+        } else {
+          data.items.forEach((contact, index) => {
+            const row = document.createElement('tr');
+            row.className = 'hover:bg-gray-50/50 transition-colors';
+            row.innerHTML = `
+              <td class="px-6 py-4">
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100" style="color: var(--text-muted);">
+                  #${contact.id}
+                </span>
+              </td>
+              <td class="px-6 py-4">
+                <div class="font-medium" style="color: var(--text-primary);">${escapeHtml(contact.name)}</div>
+              </td>
+              <td class="px-6 py-4">
+                <a href="mailto:${escapeHtml(contact.email)}" class="hover:underline" style="color: var(--brand-primary);">
+                  ${escapeHtml(contact.email)}
+                </a>
+              </td>
+              <td class="px-6 py-4">
+                <div class="max-w-md">
+                  <div class="text-sm whitespace-pre-wrap line-clamp-2" style="color: var(--text-secondary);">
+                    ${escapeHtml(contact.message)}
+                  </div>
+                </div>
+              </td>
+              <td class="px-6 py-4">
+                <div class="text-sm" style="color: var(--text-muted);">
+                  ${formatDate(contact.created_at)}
+                </div>
+              </td>
+            `;
+            tbody.appendChild(row);
+          });
+        }
+        
+        // Update pagination
+        const start = (currentPage - 1) * PAGE_SIZE + 1;
+        const end = Math.min(currentPage * PAGE_SIZE, totalContacts);
+        
+        document.getElementById('page-info').textContent = 
+          totalContacts > 0 ? `${start}-${end} / ${totalContacts}` : '0 / 0';
+        
+        document.getElementById('prev-btn').disabled = currentPage <= 1;
+        document.getElementById('next-btn').disabled = currentPage * PAGE_SIZE >= totalContacts;
+        
+      } catch (error) {
+        console.error('문의 로드 오류:', error);
+        document.getElementById('total-contacts').textContent = '로드 실패';
+        document.getElementById('contacts-tbody').innerHTML = `
+          <tr>
+            <td colspan="5" class="px-6 py-12 text-center text-red-600">
+              <div class="flex flex-col items-center gap-3">
+                <svg class="w-12 h-12 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16c-.77.833.192 2.5 1.732 2.5z"></path>
+                </svg>
+                <div class="text-lg font-medium">문의 목록을 불러올 수 없습니다</div>
+                <div class="text-sm opacity-70">${error.message}</div>
+                <button onclick="loadContacts()" class="mt-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors">
+                  다시 시도
+                </button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    function formatDate(dateString) {
+      try {
+        const date = new Date(dateString);
+        return date.toLocaleString('ko-KR', {
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit'
+        });
+      } catch {
+        return dateString;
+      }
+    }
+
+    // Event listeners
+    document.getElementById('prev-btn').addEventListener('click', () => {
+      if (currentPage > 1) {
+        currentPage--;
+        loadContacts();
+      }
+    });
+
+    document.getElementById('next-btn').addEventListener('click', () => {
+      if (currentPage * PAGE_SIZE < totalContacts) {
+        currentPage++;
+        loadContacts();
+      }
+    });
+
+    // Initial load
+    loadContacts();
+  </script>
+</body>
+</html>

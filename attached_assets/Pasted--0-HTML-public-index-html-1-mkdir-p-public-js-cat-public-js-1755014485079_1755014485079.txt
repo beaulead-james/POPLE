@@ -1,0 +1,78 @@
+# 0) 기준 파일 경로(필요시 조정)
+HTML="public/index.html"
+
+# 1) 로드모어 스크립트 생성
+mkdir -p public/js
+cat > public/js/load-more.js <<'EOF'
+(function () {
+  const STEP = 6;
+
+  // 여러 섹션에 재사용: .events-grid 클래스를 가진 모든 컨테이너에 적용
+  const grids = document.querySelectorAll('.events-grid');
+
+  grids.forEach((GRID) => {
+    // 카드: 그리드의 직계 자식들을 카드로 간주 (마크업이 바뀌어도 안전)
+    const items = Array.from(GRID.children);
+    if (!items.length) return;
+
+    // 초기 6개만 노출
+    items.forEach((el, idx) => {
+      if (idx >= STEP) el.style.display = 'none';
+    });
+
+    // 더보기 버튼 (이미 있으면 중복 생성 방지)
+    const EXIST = GRID.parentElement.querySelector('.load-more-btn');
+    if (EXIST) return;
+
+    const btnWrap = document.createElement('div');
+    btnWrap.style.display = 'flex';
+    btnWrap.style.justifyContent = 'center';
+    btnWrap.style.marginTop = '1.5rem';
+
+    const btn = document.createElement('button');
+    btn.className = 'load-more-btn';
+    btn.textContent = '더보기';
+    btn.style.padding = '0.75rem 1.25rem';
+    btn.style.borderRadius = '0.75rem';
+    btn.style.fontWeight = '600';
+    btn.style.border = 'none';
+    btn.style.cursor = 'pointer';
+    btn.style.background = 'linear-gradient(90deg,#7c3aed,#2563eb)';
+    btn.style.color = '#fff';
+    btn.style.boxShadow = '0 8px 20px rgba(0,0,0,0.12)';
+
+    btn.addEventListener('click', () => {
+      const hidden = items.filter(el => el.style.display === 'none');
+      hidden.slice(0, STEP).forEach(el => { el.style.display = ''; });
+
+      // 남은 숨김 아이템 없으면 버튼 제거
+      if (hidden.length <= STEP) {
+        btnWrap.remove();
+      }
+    });
+
+    btnWrap.appendChild(btn);
+
+    // grid 다음에 버튼 삽입 (섹션 하단 중앙)
+    if (GRID.nextSibling) {
+      GRID.parentElement.insertBefore(btnWrap, GRID.nextSibling);
+    } else {
+      GRID.parentElement.appendChild(btnWrap);
+    }
+  });
+})();
+EOF
+
+# 2) index.html에 .events-grid 클래스가 없다면 첫 번째 그리드에 자동 부여
+#   (Tailwind의 "grid"가 들어간 첫 블록을 찾아 events-grid 추가)
+if [ -f "$HTML" ]; then
+  sed -i '0,/\bclass="[^"]*grid[^"]*"/s//\0 events-grid/' "$HTML"
+fi
+
+# 3) load-more 스크립트 로드(</body> 바로 위에 삽입). 중복 방지 포함.
+if [ -f "$HTML" ]; then
+  grep -q 'js/load-more.js' "$HTML" || sed -i 's@</body>@  <script src="/js/load-more.js"></script>\n</body>@' "$HTML"
+fi
+
+echo "✅ 6개 노출 + 더보기(+6) 기능 적용 완료"
+echo "👉 앞으로 비슷한 리스트 섹션에도 컨테이너에 class=\"events-grid\"만 추가하면 자동 적용됩니다."

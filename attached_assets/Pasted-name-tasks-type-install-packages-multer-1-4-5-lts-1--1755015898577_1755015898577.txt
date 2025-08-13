@@ -1,0 +1,70 @@
+name: "이벤트 썸네일 파일 업로드 기능 추가"
+tasks:
+  - type: install
+    packages:
+      - multer@^1.4.5-lts.1
+
+  - type: write
+    path: public/js/admin-upload.js
+    content: |
+      (function(){
+        const fileInput = document.createElement('input');
+        fileInput.type = 'file';
+        fileInput.accept = 'image/*';
+        fileInput.style.display = 'block';
+        fileInput.style.marginTop = '0.5rem';
+
+        const urlInput = document.querySelector('input[name="thumbnail"], input[placeholder*="썸네일"]');
+        if (!urlInput) return;
+
+        urlInput.parentElement.appendChild(fileInput);
+
+        fileInput.addEventListener('change', async () => {
+          const file = fileInput.files[0];
+          if (!file) return;
+          const formData = new FormData();
+          formData.append('file', file);
+          try {
+            const res = await fetch('/admin/upload', { method: 'POST', body: formData });
+            if (!res.ok) throw new Error(await res.text());
+            const data = await res.json();
+            urlInput.value = data.url;
+            alert('업로드 완료!');
+          } catch (err) {
+            alert('업로드 실패: ' + err.message);
+          }
+        });
+      })();
+
+  - type: update
+    path: public/admin.html
+    pattern: "</body>"
+    multiple: false
+    replacement: "  <script src=\"/js/admin-upload.js\"></script>\n</body>"
+
+  - type: update
+    path: server.js
+    pattern: "module.exports = app;"
+    multiple: false
+    replacement: |
+      // /* ADMIN UPLOAD START */
+      const multer = require('multer');
+      const path = require('path');
+      const fs = require('fs');
+      const uploadDir = path.join(__dirname, 'public', 'uploads');
+      if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
+      const storage = multer.diskStorage({
+        destination: (req, file, cb) => cb(null, uploadDir),
+        filename: (req, file, cb) => {
+          const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+          cb(null, uniqueSuffix + path.extname(file.originalname));
+        }
+      });
+      const upload = multer({ storage });
+      app.post('/admin/upload', upload.single('file'), (req, res) => {
+        const fileUrl = '/uploads/' + req.file.filename;
+        res.json({ url: fileUrl });
+      });
+      // /* ADMIN UPLOAD END */
+
+      module.exports = app;

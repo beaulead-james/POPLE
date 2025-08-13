@@ -1,0 +1,158 @@
+다음 변경을 순서대로 적용해줘.
+
+1) 새 로그인 페이지 파일 생성
+- 경로: public/admin-login.html
+- 내용:
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>관리자 로그인 - PO+PLE</title>
+  <link rel="icon" href="/favicon.ico">
+  <link rel="stylesheet" href="/styles.css">
+  <meta name="color-scheme" content="light dark">
+</head>
+<body class="login-body">
+  <!-- 배경 장식 -->
+  <div class="login-bg">
+    <div class="orb orb-a"></div>
+    <div class="orb orb-b"></div>
+  </div>
+
+  <main class="login-shell" role="main">
+    <section class="login-card" aria-labelledby="loginTitle">
+      <div class="login-brand">
+        <div class="brand-badge">P</div>
+        <div>
+          <h1 id="loginTitle" class="login-title">관리자 로그인</h1>
+          <p class="login-sub">PO+PLE 이벤트 관리 시스템</p>
+        </div>
+      </div>
+
+      <form id="admin-login-form" class="login-form" method="POST" action="/admin/login">
+        <label class="login-field">
+          <span class="login-label">사용자명</span>
+          <input type="text" name="username" autocomplete="username" required placeholder="아이디를 입력하세요" />
+        </label>
+
+        <label class="login-field">
+          <span class="login-label">비밀번호</span>
+          <div class="password-wrap">
+            <input id="password" type="password" name="password" autocomplete="current-password" required placeholder="비밀번호를 입력하세요" />
+            <button type="button" class="btn-eye" aria-label="비밀번호 보기" title="비밀번호 보기"></button>
+          </div>
+          <span id="capsHint" class="caps-hint" aria-live="polite" hidden>CapsLock이 켜져 있습니다.</span>
+        </label>
+
+        <div class="login-options">
+          <label class="remember">
+            <input type="checkbox" name="remember" value="1" />
+            <span>로그인 상태 유지</span>
+          </label>
+          <a class="help" href="#" onclick="alert('관리자에게 비밀번호 초기화를 요청하세요.'); return false;">도움이 필요하신가요?</a>
+        </div>
+
+        <button class="btn-primary" type="submit">로그인</button>
+
+        <p class="login-note">보안을 위해 공용 PC에서는 로그아웃을 꼭 눌러주세요.</p>
+        <div id="loginError" class="login-error" role="alert" hidden>로그인에 실패했습니다.</div>
+      </form>
+    </section>
+  </main>
+
+  <script>
+    // 포커스
+    const user = document.querySelector('input[name="username"]');
+    if (user) user.focus();
+
+    // 비번 보기 토글
+    const eyeBtn = document.querySelector('.btn-eye');
+    const pw = document.getElementById('password');
+    if (eyeBtn && pw) {
+      eyeBtn.addEventListener('click', () => {
+        const on = pw.getAttribute('type') === 'password' ? 'text' : 'password';
+        pw.setAttribute('type', on);
+        eyeBtn.classList.toggle('on');
+        eyeBtn.setAttribute('aria-label', on === 'password' ? '비밀번호 보기' : '비밀번호 숨기기');
+      });
+      pw.addEventListener('keydown', (e) => {
+        const hint = document.getElementById('capsHint');
+        if (!hint) return;
+        const caps = e.getModifierState && e.getModifierState('CapsLock');
+        hint.hidden = !caps;
+      });
+    }
+
+    // 간단 검증 & 실패 표시 (서버가 401/403일 때)
+    const form = document.getElementById('admin-login-form');
+    form?.addEventListener('submit', async (ev) => {
+      const u = form.username.value.trim();
+      const p = form.password.value.trim();
+      if (!u || !p) {
+        ev.preventDefault();
+        document.getElementById('loginError').textContent = '아이디와 비밀번호를 입력하세요.';
+        document.getElementById('loginError').hidden = false;
+      }
+    });
+  </script>
+</body>
+</html>
+
+2) 스타일 보강: public/styles.css 맨 아래에 아래 내용을 추가해.
+  
+/* === LOGIN: gradient + glass === */
+.login-body { min-height: 100vh; background: radial-gradient(1200px 600px at 10% 0%, rgba(124,58,237,.24), transparent 60%), radial-gradient(1200px 600px at 90% 100%, rgba(37,99,235,.22), transparent 60%), #0b1220; color: #e7ecf6; }
+.login-bg { position: fixed; inset: 0; overflow: hidden; pointer-events: none; }
+.orb { position: absolute; filter: blur(64px); opacity: .55; border-radius: 9999px; }
+.orb-a { width: 420px; height: 420px; top: -80px; left: -60px; background: #7c3aed; }
+.orb-b { width: 520px; height: 520px; bottom: -120px; right: -80px; background: #2563eb; }
+
+.login-shell { display: grid; place-items: center; min-height: 100vh; padding: 32px 20px; }
+.login-card { width: 100%; max-width: 480px; background: rgba(17,25,40,.6); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,.08); border-radius: 20px; padding: 28px; box-shadow: 0 20px 60px rgba(0,0,0,.35); }
+
+.login-brand { display: flex; gap: 14px; align-items: center; margin-bottom: 16px; }
+.brand-badge { width: 40px; height: 40px; display: grid; place-items: center; border-radius: 12px; font-weight: 800; background: linear-gradient(90deg,#7c3aed,#2563eb); color: #fff; }
+.login-title { font-size: 20px; font-weight: 800; color: #eef2ff; margin: 0; }
+.login-sub { margin: 2px 0 0 0; color: #9fb0cc; font-size: 13px; }
+
+.login-form { display: grid; gap: 14px; margin-top: 10px; }
+.login-field { display: grid; gap: 8px; }
+.login-label { color: #c7d2fe; font-size: 13px; }
+.login-field input[type="text"],
+.login-field input[type="password"] { width: 100%; padding: 12px 14px; border-radius: 12px; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1); color: #e7ecf6; outline: none; }
+.login-field input::placeholder { color: #8fa2bf; }
+
+.password-wrap { position: relative; }
+.password-wrap input { padding-right: 44px; }
+.btn-eye { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); width: 32px; height: 32px; border-radius: 8px; border: 1px solid rgba(255,255,255,.12); background: rgba(255,255,255,.06); cursor: pointer; }
+.btn-eye::before { content: '👁️'; display: block; font-size: 16px; }
+.btn-eye.on::before { content: '🙈'; }
+
+.caps-hint { margin-top: 6px; font-size: 12px; color: #ffd166; }
+
+.login-options { display: flex; justify-content: space-between; align-items: center; margin-top: 2px; }
+.remember { display: inline-flex; align-items: center; gap: 8px; color: #a8b4cc; font-size: 13px; }
+.help { color: #93c5fd; font-size: 13px; text-decoration: underline; }
+
+.btn-primary { width: 100%; padding: 12px 16px; border-radius: 12px; border: 0; cursor: pointer; background: linear-gradient(90deg,#7c3aed,#2563eb); color: #fff; font-weight: 700; box-shadow: 0 12px 30px rgba(37,99,235,.35); }
+.btn-primary:hover { filter: brightness(1.05); }
+.btn-primary:active { transform: translateY(1px); }
+
+.login-note { margin-top: 8px; color: #91a2bd; font-size: 12px; text-align: center; }
+.login-error { margin-top: 10px; background: rgba(239,68,68,.18); border: 1px solid rgba(239,68,68,.35); color: #fecaca; border-radius: 10px; padding: 10px 12px; font-size: 13px; }
+
+@media (max-width: 420px) {
+  .login-card { padding: 22px; border-radius: 16px; }
+  .brand-badge { width: 36px; height: 36px; border-radius: 10px; }
+}
+
+3) 서버 라우트 연결
+- server.js 에서 /admin/login 라우트가 sendFile로 HTML을 내려보내는 부분을 찾아, 대상 파일을 public/admin-login.html 로 지정해.
+- 만약 해당 라우트가 없다면 아래 코드를 추가해:
+  const path = require('path');
+  app.get('/admin/login', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'admin-login.html'));
+  });
+
+4) 완료 후 서버 재시작.

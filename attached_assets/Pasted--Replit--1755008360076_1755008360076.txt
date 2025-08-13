@@ -1,0 +1,109 @@
+아래 프롬프트를 그대로 Replit 에이전트에 붙여넣어 처음 골격을 만들어주세요. (회사 스타일에 맞게 한글 라벨/필드명 사용)
+
+⸻
+
+목표: 스크린샷과 유사한 **홈페이지 관리자(Admin)**를 만들고, 이벤트를 블로그처럼 등록/수정/삭제/목록할 수 있게 한다.
+
+기술스택:
+	•	Node.js + Express
+	•	SQLite (파일명: events.db)
+	•	Tailwind CSS(CDN)
+	•	클라이언트 사이드 마크다운 렌더(marked)
+
+폴더/파일 구조:
+	•	server.js (Express 서버 및 API)
+	•	db.js (SQLite 연결 & 초기화)
+	•	public/
+	•	index.html (퍼블릭 사이트: 이벤트 카드 3열 그리드 섹션 포함)
+	•	events.js (퍼블릭 이벤트 목록 가져와 렌더)
+	•	admin.html (관리자 대시보드: 좌측 메뉴 + 이벤트 관리 화면)
+	•	admin.js (관리자 이벤트 CRUD 로직)
+	•	styles.css (간단 커스텀)
+	•	.env (ADMIN_USER, ADMIN_PASS)
+	•	package.json (scripts: start/dev)
+
+DB 스키마 (이벤트용):
+	•	테이블: events
+	•	id INTEGER PK AUTOINCREMENT
+	•	title TEXT NOT NULL            // 제목
+	•	slug TEXT UNIQUE               // 선택(영문/하이픈)
+	•	content TEXT NOT NULL          // 본문(마크다운 기본)
+	•	content_format TEXT DEFAULT ‘markdown’ CHECK(‘markdown’,‘html’,‘text’)
+	•	start_date TEXT NOT NULL       // YYYY-MM-DD
+	•	end_date   TEXT NOT NULL       // YYYY-MM-DD
+	•	status TEXT NOT NULL DEFAULT ‘draft’ CHECK(‘draft’,‘published’,‘archived’)
+	•	thumbnail_url TEXT             // 목록 썸네일(옵션)
+	•	tags TEXT                      // “여름,프로모션” 형식(옵션)
+	•	published_at TEXT              // 발행 시각(옵션)
+	•	created_at TEXT DEFAULT (datetime(‘now’))
+	•	updated_at TEXT DEFAULT (datetime(‘now’))
+	•	updated_at 자동 갱신 트리거와 인덱스 생성:
+	•	트리거: trg_events_updated_at (UPDATE 시 updated_at = now)
+	•	인덱스: (status, start_date, end_date), (published_at DESC)
+
+서버 요구사항(server.js):
+	•	Express 설정, 정적 폴더 /public
+	•	세션/쿠키 기반 간단 로그인
+	•	.env: ADMIN_USER=admin, ADMIN_PASS=admin123!
+	•	GET /admin → 로그인 필요. 미로그인 시 로그인 폼 반환, 로그인 성공 시 admin.html 제공
+	•	API (JSON 반환, 에러는 {error,message}):
+	•	GET /api/events?status=&search=&page=1&pageSize=12&from=&to=&sort=published_at&order=desc
+	•	search는 제목 LIKE, from/to는 기간 교집합 필터(오늘 포함 이벤트 등)
+	•	GET /api/events/:id
+	•	GET /api/events/slug/:slug
+	•	POST /api/events (로그인 필요)
+	•	body: {title, slug?, content, content_format?, start_date, end_date, status?, thumbnail_url?, tags?}
+	•	status='published'로 저장 시 published_at을 now로 세팅
+	•	PUT /api/events/:id (로그인 필요)
+	•	DELETE /api/events/:id (로그인 필요)
+	•	입력 검증:
+	•	필수: title, content, start_date, end_date
+	•	start_date <= end_date 체크
+	•	DB 초기화:
+	•	서버 시작 시 CREATE TABLE IF NOT EXISTS ... 실행
+	•	더미 데이터 23개 삽입(초안 1, 발행 12)
+
+관리자 UI(public/admin.html, public/admin.js):
+	•	좌측 사이드 메뉴: “대시보드(목업) / 이벤트 관리”
+	•	상단 바: 페이지 타이틀 “이벤트 관리”
+	•	목록 화면
+	•	검색 입력(제목), 상태 필터(draft/published/archived), 기간 필터(From~To), 정렬(select), 페이지네이션
+	•	테이블 컬럼: 썸네일, 제목, 기간(시작~종료), 상태, 발행일, 액션(수정/삭제)
+	•	작성/수정 모달
+	•	필드: 제목, 슬러그(선택), 기간(달력 2개), 상태(초안/발행/보관), 썸네일 URL, 태그, 본문(마크다운 textarea)
+	•	우측/하단에 “미리보기” 영역(클라이언트에서 marked로 렌더)
+	•	저장/취소, 필수값 검증 및 오류 토스트
+	•	저장/수정/삭제 시 새로고침 없이 목록 갱신
+	•	Tailwind 컴포넌트로 기본 깔끔한 스타일
+	•	반응형 그리드 예시(퍼블릭 참고): grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8
+
+퍼블릭 사이트(public/index.html, public/events.js):
+	•	홈 섹션에 “진행 중 이벤트” 카드 3열 그리드
+	•	오늘 날짜와 기간이 겹치는 published 이벤트 우선 노출(최대 12개)
+	•	카드: 썸네일, 제목, YYYY. M. D. ~ YYYY. M. D. 표시, “자세히” 링크(/event/:slug 또는 /event/:id)
+	•	상세 페이지는 간단 라우트로 slug가 있으면 사용, 없으면 id로 조회하여 마크다운 렌더
+
+캐시/빌드:
+	•	styles.css, admin.js, events.js 로드 시 ?v=<빌드시간> 쿼리 파라미터 자동 추가해 캐시 갱신
+	•	package.json:
+	•	"start": "node server.js"
+	•	"dev": "nodemon server.js"
+
+보안/권한:
+	•	관리자 API(POST/PUT/DELETE)는 로그인 세션 필요
+	•	세션 만료 2시간(예: cookie-session 또는 express-session)
+	•	비로그인 상태에서 /admin 접근 시 로그인 폼으로
+
+완료 기준(수행 후 체크):
+	1.	/admin 접속 → 로그인 → “이벤트 관리” 목록에 더미 데이터 표시
+	2.	+ 새 이벤트로 생성 → 목록/검색/필터/페이지네이션 동작
+	3.	수정/삭제 정상 동작, 발행 상태 변경 시 퍼블릭 홈 그리드에 반영
+	4.	퍼블릭 홈에서 이벤트 카드가 3열로 반응형 배치되고 날짜/썸네일/제목 노출
+
+추가 요청:
+	•	모든 생성 파일을 한 번에 만들고 실행까지 해주세요.
+	•	구현 후 생성된 주요 코드(server.js, db.js, public/admin.html, public/admin.js, public/events.js)를 표시해 주세요.
+
+⸻
+
+이대로 실행되면 바로 기본형 관리자/퍼블릭이 뜹니다. 끝나고 나면 제가 컬러/폰트, 세부 라벨을 우리 회사 톤앤매너에 맞게 손봐드릴게요.

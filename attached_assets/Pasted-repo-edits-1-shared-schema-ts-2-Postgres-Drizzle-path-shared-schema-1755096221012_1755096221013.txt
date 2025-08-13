@@ -1,0 +1,343 @@
+repo:
+  edits:
+    # 1) shared/schema.ts : 통계 테이블 2개 추가 (Postgres/Drizzle)
+    - path: shared/schema.ts
+      replace_if_missing:
+        anchor: "// Events table"
+        insert_before: |
+          // --- Analytics tables ---
+          export const analyticsEvents = pgTable("analytics_events", {
+            id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+            ts: timestamp("ts").notNull().defaultNow(),
+            path: text("path").notNull(),
+            referrer: text("referrer"),
+            utmSource: varchar("utm_source", { length: 120 }),
+            utmMedium: varchar("utm_medium", { length: 120 }),
+            utmCampaign: varchar("utm_campaign", { length: 120 }),
+            ua: text("ua"),
+            ipHash: varchar("ip_hash", { length: 64 }),
+            isBot: boolean("is_bot").default(false),
+            userId: varchar("user_id"),
+          });
+
+          export const analyticsDaily = pgTable("analytics_daily", {
+            day: timestamp("day").notNull(), // date로 써도 되지만 편의상 timestamp(자정)
+            path: text("path").notNull(),
+            pv: integer("pv").notNull().default(0),
+            uv: integer("uv").notNull().default(0),
+          }, (t) => ({
+            pk: primaryKey({ columns: [t.day, t.path] }),
+            dayIdx: index("idx_analytics_daily_day").on(t.day),
+          }));
+
+    # 2) server/analytics.ts : 로깅 미들웨어 + 집계 + API 라우터
+    - path: server/analytics.ts
+      content: |
+        import type { Request, Response, NextFunction } from "express";
+        import crypto from "crypto";
+        import express from "express";
+        import { db } from "./db";
+        import { sql, and, eq, desc, gt } from "drizzle-orm";
+        import { analyticsEvents, analyticsDaily } from "../shared/schema";
+
+        const BOT_RE = /(bot|spider|crawl|crawler|fetch|headless|curl|wget|python-requests|httpclient|lighthouse|monitor)/i;
+
+        function ipHash(ip?: string) {
+          return crypto.createHash("sha256").update(ip || "").digest("hex").slice(0, 48);
+        }
+
+        // 세션 로그인 기반 관리자 인증 (app.ts의 방식과 동일)
+        function requireAdmin(req: any, res: Response, next: NextFunction) {
+          if (req.session?.adminId) return next();
+          return res.status(401).json({ error: "Unauthorized" });
+        }
+
+        // --- 1) 로깅 미들웨어 ---
+        export function analyticsMiddleware() {
+          const exclude = [/^\/admin/, /^\/assets/, /^\/static/, /^\/images/, /^\/favicon/, /^\/healthz/];
+          return async function (req: any, _res: Response, next: NextFunction) {
+            try {
+              if (exclude.some((re) => re.test(req.path))) return next();
+
+              const ua = req.get("user-agent") || "";
+              const isBot = BOT_RE.test(ua);
+
+              const ip = (req.headers["x-forwarded-for"] as string)?.split(",")[0]?.trim() || req.socket.remoteAddress;
+              const ipH = ipHash(ip);
+
+              const url = new URL(`${req.protocol}://${req.get("host")}${req.originalUrl}`);
+              const utmSource = url.searchParams.get("utm_source") || undefined;
+              const utmMedium = url.searchParams.get("utm_medium") || undefined;
+              const utmCampaign = url.searchParams.get("utm_campaign") || undefined;
+
+              const userId = req.session?.adminId ? String(req.session.adminId) : undefined;
+
+              await db.insert(analyticsEvents).values({
+                path: req.path,
+                referrer: req.get("referer") || undefined,
+                utmSource, utmMedium, utmCampaign,
+                ua, ipHash: ipH, isBot, userId,
+              });
+            } catch (e) {
+              console.error("analytics insert failed", e);
+            }
+            next();
+          };
+        }
+
+        // --- 2) 집계 함수(최근 3일) ---
+        export async function aggregateDaily() {
+          // 최근 3일 내 이벤트만
+          const threeDaysAgo = sql`now() - interval '3 days'`;
+          const rows = await db.select({
+            ts: analyticsEvents.ts,
+            path: analyticsEvents.path,
+            ipHash: analyticsEvents.ipHash,
+            isBot: analyticsEvents.isBot,
+          }).from(analyticsEvents).where(gt(analyticsEvents.ts, threeDaysAgo));
+
+          // 메모리 집계
+          const byDayPath = new Map<string, number>();
+          const byDayIps = new Map<string, Set<string>>();
+
+          for (const r of rows) {
+            if (r.isBot) continue;
+            const d = new Date(r.ts as unknown as string);
+            const dayKey = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate())).toISOString(); // 자정 UTC
+            const key = `${dayKey}|${r.path}`;
+            byDayPath.set(key, (byDayPath.get(key) || 0) + 1);
+
+            if (!byDayIps.has(dayKey)) byDayIps.set(dayKey, new Set());
+            if (r.ipHash) byDayIps.get(dayKey)!.add(r.ipHash);
+          }
+
+          // UPSERT
+          for (const [key, pv] of byDayPath) {
+            const [dayIso, path] = key.split("|");
+            const uv = byDayIps.get(dayIso)?.size || 0;
+            await db
+              .insert(analyticsDaily)
+              .values({ day: new Date(dayIso), path, pv, uv })
+              .onConflictDoUpdate({
+                target: [analyticsDaily.day, analyticsDaily.path],
+                set: { pv, uv },
+              });
+          }
+        }
+
+        // --- 3) API Router ---
+        export const analyticsRouter = express.Router();
+
+        analyticsRouter.get("/timeseries", requireAdmin, async (_req, res) => {
+          const rows = await db
+            .select({
+              day: analyticsDaily.day,
+              pv: analyticsDaily.pv,
+              uv: analyticsDaily.uv,
+            })
+            .from(analyticsDaily)
+            .orderBy(analyticsDaily.day);
+          res.json({ ok: true, rows });
+        });
+
+        analyticsRouter.get("/top-paths", requireAdmin, async (_req, res) => {
+          const rows = await db
+            .select({
+              path: analyticsDaily.path,
+              pv: sql<number>`sum(${analyticsDaily.pv})`.as("pv"),
+              uv: sql<number>`sum(${analyticsDaily.uv})`.as("uv"),
+            })
+            .from(analyticsDaily)
+            .groupBy(analyticsDaily.path)
+            .orderBy(desc(sql`sum(${analyticsDaily.pv})`))
+            .limit(50);
+          res.json({ ok: true, rows });
+        });
+
+        analyticsRouter.get("/summary", requireAdmin, async (req, res) => {
+          const day = req.query.day as string | undefined;
+          if (!day) {
+            return res.json({ ok: true, rows: [] });
+          }
+          const dayStart = new Date(`${day}T00:00:00.000Z`);
+          const rows = await db
+            .select({
+              day: analyticsDaily.day,
+              path: analyticsDaily.path,
+              pv: analyticsDaily.pv,
+              uv: analyticsDaily.uv,
+            })
+            .from(analyticsDaily)
+            .where(eq(analyticsDaily.day, dayStart))
+            .orderBy(desc(analyticsDaily.pv))
+            .limit(1000);
+          res.json({ ok: true, rows });
+        });
+
+    # 3) server/app.ts : 세션 아래에 로깅 미들웨어 연결 + API/페이지 라우팅
+    - path: server/app.ts
+      find: "app.use(express.json());"
+      replace: |
+        app.use(express.json());
+        app.use(express.urlencoded({ extended: true }));
+        app.use(express.static('.'));
+        // ✅ 세션 설정 이후에 로깅 미들웨어 장착
+        import('./analytics').then(mod => {
+          app.use(mod.analyticsMiddleware());
+          app.use('/admin/analytics/api', mod.analyticsRouter);
+        });
+
+    - path: server/app.ts
+      replace_if_missing:
+        anchor: "app.get('/admin', requireAuth, async (req, res) => {"
+        insert_before: |
+          // 접속 통계 페이지 (세션 로그인 필요)
+          app.get('/admin/analytics', requireAuth, (req, res) => {
+            res.sendFile(path.join(process.cwd(), 'public', 'admin-analytics.html'));
+          });
+
+    # 4) public/admin.html : 사이드바에 '접속 통계' 메뉴 추가
+    - path: public/admin.html
+      find: ">이벤트 관리</span></a>"
+      replace: |
+        >이벤트 관리</span></a>
+          <a href="/admin/analytics" class="flex items-center px-3 py-2 rounded-xl transition"
+             style="color: var(--text);"
+             onmouseover="this.style.background='#F3F4F6'" onmouseout="this.style.background='transparent'">
+            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M4 19h16M4 15l4-4 4 4 8-8"></path>
+            </svg>
+            접속 통계
+          </a>
+
+    # 5) public/admin-analytics.html : 관리자 통계 화면(UI)
+    - path: public/admin-analytics.html
+      content: |
+        <!DOCTYPE html>
+        <html lang="ko">
+        <head>
+          <meta charset="utf-8" />
+          <meta name="viewport" content="width=device-width, initial-scale=1" />
+          <title>접속 통계 - PO+PLE</title>
+          <script src="https://cdn.tailwindcss.com"></script>
+          <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+          <link rel="icon" href="/favicon.png"/>
+        </head>
+        <body class="bg-slate-50 text-slate-900">
+          <div class="min-h-screen flex">
+            <!-- 좌측 사이드바(간단 버전) -->
+            <aside class="hidden md:flex md:w-64 bg-white/80 backdrop-blur border-r border-slate-200 flex-col">
+              <div class="p-4 flex items-center gap-2">
+                <img src="/favicon.png" class="w-6 h-6" alt="logo"/>
+                <div class="font-semibold">PO+PLE</div>
+                <span class="ml-1 text-slate-500 text-sm">관리자</span>
+              </div>
+              <nav class="px-2 pb-6 flex-1">
+                <ul class="space-y-1 text-slate-700">
+                  <li><a href="/admin" class="flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-slate-100"><span>🏠</span><span>대시보드</span></a></li>
+                  <li><a href="/admin" class="flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-slate-100"><span>📅</span><span>이벤트 관리</span></a></li>
+                  <li><a href="/admin-contacts.html" class="flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-slate-100"><span>💬</span><span>문의 관리</span></a></li>
+                  <li><a href="/admin/analytics" class="flex items-center gap-2 px-3 py-2 rounded-xl bg-indigo-50 text-indigo-700 ring-1 ring-indigo-100"><span>📈</span><span>접속 통계</span></a></li>
+                </ul>
+              </nav>
+              <div class="mt-auto p-4">
+                <form action="/admin/logout" method="POST">
+                  <button class="w-full inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-rose-500 text-white hover:bg-rose-600">로그아웃</button>
+                </form>
+              </div>
+            </aside>
+
+            <!-- 우측 본문 -->
+            <main class="flex-1 min-w-0">
+              <header class="sticky top-0 z-10 bg-slate-50/80 backdrop-blur border-b border-slate-200">
+                <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+                  <h1 class="text-xl md:text-2xl font-bold">접속 통계</h1>
+                  <div class="text-slate-500 text-sm">페이지뷰 · 사용자 · 인기 경로</div>
+                </div>
+              </header>
+
+              <div class="max-w-7xl mx-auto p-4 md:p-6 space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div class="p-4 bg-white rounded-2xl shadow"><div class="text-sm text-slate-500">오늘 PV</div><div id="kpi-pv" class="text-2xl font-semibold">-</div></div>
+                  <div class="p-4 bg-white rounded-2xl shadow"><div class="text-sm text-slate-500">오늘 UV</div><div id="kpi-uv" class="text-2xl font-semibold">-</div></div>
+                  <div class="p-4 bg-white rounded-2xl shadow"><div class="text-sm text-slate-500">Top Path</div><div id="kpi-top" class="text-2xl font-semibold truncate">-</div></div>
+                </div>
+
+                <section class="p-4 bg-white rounded-2xl shadow">
+                  <div class="flex items-center justify-between mb-2">
+                    <h2 class="font-semibold">일자별 PV/UV</h2>
+                    <div class="text-sm text-slate-500">최근 6개월</div>
+                  </div>
+                  <canvas id="ts" height="120"></canvas>
+                </section>
+
+                <section class="p-4 bg-white rounded-2xl shadow">
+                  <h2 class="font-semibold mb-2">인기 경로 TOP 50</h2>
+                  <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                      <thead><tr class="text-left border-b"><th class="py-2 pr-2">경로</th><th class="py-2 pr-2">PV</th><th class="py-2">UV</th></tr></thead>
+                      <tbody id="top-paths"></tbody>
+                    </table>
+                  </div>
+                </section>
+              </div>
+            </main>
+          </div>
+
+          <script>
+            async function j(u){ const r = await fetch(u); if(!r.ok) throw new Error('Auth '+r.status); return r.json(); }
+            function todayISO(){ return new Date().toISOString().slice(0,10); }
+
+            (async () => {
+              try {
+                const [ts, top] = await Promise.all([
+                  j('/admin/analytics/api/timeseries'),
+                  j('/admin/analytics/api/top-paths')
+                ]);
+                const sum = await j('/admin/analytics/api/summary?day='+todayISO());
+                const pv = sum.rows.reduce((a,b)=>a+b.pv,0);
+                const uv = sum.rows.reduce((a,b)=>a+b.uv,0);
+                document.getElementById('kpi-pv').textContent = pv;
+                document.getElementById('kpi-uv').textContent = uv;
+                document.getElementById('kpi-top').textContent = (top.rows[0]?.path || '-');
+
+                new Chart(document.getElementById('ts').getContext('2d'), {
+                  type: 'line',
+                  data: {
+                    labels: ts.rows.map(r=> new Date(r.day).toISOString().slice(0,10)),
+                    datasets: [
+                      { label: 'PV', data: ts.rows.map(r=>r.pv) },
+                      { label: 'UV', data: ts.rows.map(r=>r.uv) }
+                    ]
+                  },
+                  options: { responsive: true, scales:{ y:{ beginAtZero:true } } }
+                });
+
+                const tbody = document.getElementById('top-paths');
+                tbody.innerHTML = top.rows.map(r=>`
+                  <tr class="border-t">
+                    <td class="py-2 pr-2">${r.path}</td>
+                    <td class="py-2 pr-2">${r.pv}</td>
+                    <td class="py-2">${r.uv}</td>
+                  </tr>
+                `).join('');
+              } catch (e) {
+                alert('접근 권한이 없습니다. 관리자 로그인 후 다시 시도하세요.');
+              }
+            })();
+          </script>
+        </body>
+        </html>
+
+    # 6) (선택) 집계 스크립트를 동작시키기 위한 작은 엔드포인트(내부 확인용)
+    - path: server/app.ts
+      replace_if_missing:
+        anchor: "export default app;"
+        insert_before: |
+          // 내부 점검용 집계 트리거(배포 전 비활성화 가능)
+          app.post('/admin/analytics/aggregate', requireAuth, async (_req, res) => {
+            const mod = await import('./analytics');
+            await mod.aggregateDaily();
+            res.json({ ok: true });
+          });

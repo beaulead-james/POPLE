@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PO+PLE - 올인원 포커 플랫폼</title>
+  <meta name="description" content="포플(PO+PLE)은 위치 기반 홀덤펍 검색부터 포커 핸드 리뷰, 전략 공유, 커뮤니티 토론까지 한 곳에서 제공합니다. 전국 대회 일정, 실시간 통계 분석, 클락 기능, AI 포커 어시스턴트까지 갖춘 올인원 포커 플랫폼에서 더 빠르게 배우고, 더 깊이 즐기세요." />
+  
+  <!-- Open Graph Meta Tags -->
+  <meta property="og:title" content="PO+PLE - 올인원 포커 플랫폼" />
+  <meta property="og:description" content="포플(PO+PLE)은 위치 기반 홀덤펍 검색부터 포커 핸드 리뷰, 전략 공유, 커뮤니티 토론까지 한 곳에서 제공합니다. 전국 대회 일정, 실시간 통계 분석, 클락 기능, AI 포커 어시스턴트까지 갖춘 올인원 포커 플랫폼에서 더 빠르게 배우고, 더 깊이 즐기세요." />
+  <meta property="og:image" content="https://pokerplayer.replit.app/SNSOGIMEGE.png" />
+  <meta property="og:url" content="https://pokerplayer.replit.app/" />
+  <meta property="og:type" content="website" />
+
+  <!-- Twitter Card Meta Tags -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="PO+PLE - 올인원 포커 플랫폼" />
+  <meta name="twitter:description" content="포플(PO+PLE)은 위치 기반 홀덤펍 검색부터 포커 핸드 리뷰, 전략 공유, 커뮤니티 토론까지 한 곳에서 제공합니다. 전국 대회 일정, 실시간 통계 분석, 클락 기능, AI 포커 어시스턴트까지 갖춘 올인원 포커 플랫폼에서 더 빠르게 배우고, 더 깊이 즐기세요." />
+  <meta name="twitter:image" content="https://pokerplayer.replit.app/SNSOGIMAGE.png" />
+  <link rel="icon" type="image/png" href="/favicon.png">
+  <link rel="shortcut icon" href="/favicon.png" type="image/png">
+  <!-- 캐시 방지 메타 태그 -->
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#eef2ff',
+              100: '#e0e7ff',
+              200: '#c7d2fe',
+              300: '#a5b4fc',
+              400: '#818cf8',
+              500: '#6366f1',
+              600: '#4f46e5',
+              700: '#4338ca',
+              800: '#3730a3',
+              900: '#312e81',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* 브랜드 컬러 변수 */
+    :root {
+      --brand-50: #eef2ff;
+      --brand-100: #e0e7ff;
+      --brand-200: #c7d2fe;
+      --brand-300: #a5b4fc;
+      --brand-400: #818cf8;
+      --brand-500: #6366f1;
+      --brand-600: #4f46e5;
+      --brand-700: #4338ca;
+      --brand-800: #3730a3;
+      --brand-900: #312e81;
+    }
+  </style>
+</head>
+<body class="bg-slate-900 text-white">
+  <!-- Header / Navbar -->
+  <header class="fixed top-0 left-0 right-0 z-50 bg-black/20 backdrop-blur-xl border-b border-white/10">
+    <div class="max-w-7xl mx-auto px-4">
+      <div class="flex items-center justify-between h-16">
+        <a href="#home" class="flex items-center gap-3 font-bold text-lg group">
+          <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+            <span class="text-white font-black text-lg">P</span>
+          </div>
+          <span class="text-white group-hover:text-blue-300 transition-colors duration-300">포플(PO+PLE)</span>
+        </a>
+        <nav class="hidden md:flex items-center gap-8">
+          <a href="#features" class="text-gray-300 hover:text-white font-medium transition-colors duration-300 relative group">
+            기능
+            <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-blue-400 to-purple-400 group-hover:w-full transition-all duration-300"></span>
+          </a>
+          <a href="#gallery" class="text-gray-300 hover:text-white font-medium transition-colors duration-300 relative group">
+            이벤트
+            <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-blue-400 to-purple-400 group-hover:w-full transition-all duration-300"></span>
+          </a>
+          <a href="#contact" class="text-gray-300 hover:text-white font-medium transition-colors duration-300 relative group">
+            문의
+            <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-blue-400 to-purple-400 group-hover:w-full transition-all duration-300"></span>
+          </a>
+          <a href="#start" class="px-6 py-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold rounded-full hover:shadow-lg hover:shadow-blue-500/25 transform hover:scale-105 transition-all duration-300">
+            시작하기
+          </a>
+        </nav>
+        <button id="menuBtn" class="md:hidden inline-flex items-center justify-center p-2 rounded-lg hover:bg-white/10 text-white transition-colors duration-300" aria-label="메뉴 열기">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" /></svg>
+        </button>
+      </div>
+    </div>
+    <!-- Mobile menu -->
+    <div id="mobileMenu" class="md:hidden hidden border-t border-white/10 bg-black/40 backdrop-blur-xl">
+      <div class="px-4 py-6 space-y-4">
+        <a href="#features" class="block text-gray-300 hover:text-white font-medium py-2 transition-colors duration-300">기능</a>
+        <a href="#gallery" class="block text-gray-300 hover:text-white font-medium py-2 transition-colors duration-300">이벤트</a>
+        <a href="#contact" class="block text-gray-300 hover:text-white font-medium py-2 transition-colors duration-300">문의</a>
+        <a href="#start" class="inline-block w-full text-center bg-gradient-to-r from-blue-500 to-purple-600 px-4 py-3 text-white font-semibold rounded-xl mt-4">시작하기</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section id="home" class="relative min-h-screen flex items-center overflow-hidden bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+    <!-- Animated Background Elements -->
+    <div class="absolute inset-0">
+      <!-- Primary floating orbs -->
+      <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-brand-500/20 rounded-full blur-3xl animate-pulse"></div>
+      <div class="absolute bottom-1/4 right-1/4 w-80 h-80 bg-purple-500/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
+      <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-72 h-72 bg-cyan-400/10 rounded-full blur-3xl animate-pulse delay-2000"></div>
+      
+      <!-- Poker card floating elements -->
+      <div class="absolute top-20 left-20 w-12 h-16 bg-white/5 rounded-lg rotate-12 animate-bounce delay-500"></div>
+      <div class="absolute top-32 right-32 w-12 h-16 bg-white/5 rounded-lg -rotate-12 animate-bounce delay-1000"></div>
+      <div class="absolute bottom-40 left-1/3 w-12 h-16 bg-white/5 rounded-lg rotate-45 animate-bounce delay-1500"></div>
+      
+      <!-- Grid pattern overlay -->
+      <div class="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%23ffffff" fill-opacity="0.02"%3E%3Ccircle cx="30" cy="30" r="1"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-40"></div>
+    </div>
+
+    <div class="relative z-10 max-w-7xl mx-auto px-4 py-20">
+      <div class="grid lg:grid-cols-2 gap-16 items-center">
+        <!-- Enhanced Text Content -->
+        <div class="text-center lg:text-left space-y-8">
+          <!-- Premium Badge -->
+          <div class="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white">
+            <div class="flex items-center gap-2">
+              <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+              <span class="text-sm font-medium">공식 커뮤니티 플랫폼</span>
+            </div>
+            <div class="w-px h-4 bg-white/30"></div>
+            <span class="text-xs text-green-300">✨ 프리미엄</span>
+          </div>
+
+          <!-- Main Heading with Gradient -->
+          <div class="space-y-4">
+            <h1 class="text-4xl sm:text-5xl md:text-7xl font-black leading-tight">
+              <span class="block text-white text-4xl sm:text-5xl md:text-7xl mobile-single-line" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">포커&nbsp;플레이어를&nbsp;위한</span>
+              <span class="block bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent animate-pulse">
+                PO+PLE
+              </span>
+              <span class="block text-white text-3xl sm:text-4xl md:text-5xl mt-2">커뮤니티 플랫폼</span>
+            </h1>
+          </div>
+
+          <!-- Enhanced Description -->
+          <p class="text-xl text-gray-300 leading-relaxed max-w-lg">
+            <span class="text-white font-semibold">포커를</span>사랑하는 핸디들, 
+            <span class="text-blue-300">필수 플랫폼</span> 지금 포플를 이용해보세요.<br>
+            <span class="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent font-medium">
+              커뮤니티 · 전략 · 토너먼트정보
+            </span>
+          </p>
+
+          <!-- CTA Buttons -->
+          <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+            <a href="#start" class="group relative inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-blue-500 to-purple-600 text-white font-bold rounded-2xl hover:shadow-2xl hover:shadow-blue-500/25 transform hover:scale-105 transition-all duration-300">
+              <span class="relative z-10 flex items-center gap-2">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                </svg>
+                지금 시작하기
+              </span>
+              <div class="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-700 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            </a>
+            
+            <a href="#features" class="group inline-flex items-center justify-center px-8 py-4 bg-white/10 backdrop-blur-md text-white font-semibold rounded-2xl border border-white/20 hover:bg-white/20 transition-all duration-300">
+              <span class="flex items-center gap-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                </svg>
+                기능 보기
+              </span>
+            </a>
+          </div>
+
+          <!-- Enhanced Feature Pills -->
+          <div class="grid grid-cols-2 gap-3 max-w-md mx-auto lg:mx-0">
+            <div class="flex items-center gap-2 px-3 py-2 bg-white/5 backdrop-blur-md rounded-lg border border-white/10">
+              <div class="w-2 h-2 bg-green-400 rounded-full"></div>
+              <span class="text-sm text-gray-300">홀덤펍 소개</span>
+            </div>
+            <div class="flex items-center gap-2 px-3 py-2 bg-white/5 backdrop-blur-md rounded-lg border border-white/10">
+              <div class="w-2 h-2 bg-blue-400 rounded-full"></div>
+              <span class="text-sm text-gray-300">커뮤니티 기능</span>
+            </div>
+            <div class="flex items-center gap-2 px-3 py-2 bg-white/5 backdrop-blur-md rounded-lg border border-white/10">
+              <div class="w-2 h-2 bg-purple-400 rounded-full"></div>
+              <span class="text-sm text-gray-300">포커 전략 공유</span>
+            </div>
+            <div class="flex items-center gap-2 px-3 py-2 bg-white/5 backdrop-blur-md rounded-lg border border-white/10">
+              <div class="w-2 h-2 bg-pink-400 rounded-full"></div>
+              <span class="text-sm text-gray-300">핸드 리뷰</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Enhanced Visual Section -->
+        <div class="relative">
+          <!-- Main YouTube Video Container -->
+          <div class="relative group">
+            <div class="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-600 rounded-3xl blur-xl opacity-75 group-hover:opacity-100 transition duration-300"></div>
+            <div class="relative aspect-video rounded-3xl overflow-hidden bg-gradient-to-br from-gray-900 to-gray-800 border border-white/20 shadow-2xl">
+              <iframe 
+                src="https://www.youtube.com/embed/c2oB0HurMJY?autoplay=0&mute=1&controls=1&showinfo=0&rel=0&iv_load_policy=3&modestbranding=1"
+                title="PO+PLE 포커 커뮤니티 소개"
+                class="h-full w-full"
+                frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowfullscreen>
+              </iframe>
+              <!-- Video Overlay for Better Integration -->
+              <div class="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent pointer-events-none"></div>
+            </div>
+          </div>
+
+          <!-- Floating Stats Cards -->
+          <div class="absolute -bottom-8 -left-8 hidden lg:flex items-center gap-4 px-6 py-4 bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 shadow-xl">
+            <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center">
+              <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+            </div>
+            <div>
+              <p class="text-white font-bold">PO+PLE</p>
+              <p class="text-gray-300 text-sm">포커 플레이어 플랫폼</p>
+            </div>
+          </div>
+
+          <div class="absolute -top-8 -right-8 hidden lg:flex items-center gap-3 px-4 py-3 bg-red-500/20 backdrop-blur-md rounded-xl border border-red-400/30">
+            <div class="w-3 h-3 bg-red-400 rounded-full animate-pulse"></div>
+            <span class="text-red-300 text-sm font-medium">영상 재생</span>
+          </div>
+
+          <!-- Decorative Elements -->
+          <div class="absolute top-4 left-4 w-8 h-8 bg-yellow-400/20 rounded-lg rotate-12 animate-bounce delay-300"></div>
+          <div class="absolute bottom-4 right-4 w-6 h-6 bg-pink-400/20 rounded-lg -rotate-12 animate-bounce delay-700"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scroll Indicator -->
+    <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
+      <a href="#features" class="text-white/60 hover:text-white transition-colors">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+        </svg>
+      </a>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section id="features" class="relative py-24 bg-gradient-to-b from-slate-900 to-gray-900 overflow-hidden">
+    <!-- Background Elements -->
+    <div class="absolute inset-0">
+      <div class="absolute top-20 left-10 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl"></div>
+      <div class="absolute bottom-20 right-10 w-80 h-80 bg-purple-500/10 rounded-full blur-3xl"></div>
+    </div>
+
+    <div class="relative z-10 max-w-7xl mx-auto px-4">
+      <!-- Section Header -->
+      <div class="text-center mb-16">
+        <div class="inline-flex items-center gap-2 px-4 py-2 bg-white/5 backdrop-blur-md rounded-full border border-white/10 text-white mb-6">
+          <div class="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
+          <span class="text-sm font-medium">핵심 기능</span>
+        </div>
+        <h2 class="text-4xl md:text-5xl font-black text-white leading-tight">
+          <span class="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">강력한 기능들로</span>
+          <br>
+          <span class="text-white">완벽한 커뮤니티를</span>
+        </h2>
+        <p class="mt-6 text-xl text-gray-300 max-w-2xl mx-auto">
+          프로급 기능들을 간단하게 사용하여 브랜드에 맞는 완벽한 웹사이트를 만드세요
+        </p>
+      </div>
+
+      <!-- Feature Grid -->
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <!-- Feature 1 -->
+        <div class="group relative p-8 bg-white/5 backdrop-blur-md rounded-3xl border border-white/10 hover:bg-white/10 transition-all duration-500 hover:scale-105">
+          <div class="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+          <div class="relative z-10">
+            <div class="w-14 h-14 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+              <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+              </svg>
+            </div>
+            <h3 class="text-xl font-bold text-white mb-3">내주변 홀덤펍</h3>
+            <p class="text-gray-300 leading-relaxed">“위치 기반으로 가장 가까운 홀덤펍을 빠르게 찾고, 운영 정보와 리뷰를 한눈에 확인하세요.”</p>
+          </div>
+        </div>
+
+        <!-- Feature 2 -->
+        <div class="group relative p-8 bg-white/5 backdrop-blur-md rounded-3xl border border-white/10 hover:bg-white/10 transition-all duration-500 hover:scale-105">
+          <div class="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+          <div class="relative z-10">
+            <div class="w-14 h-14 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+              <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+              </svg>
+            </div>
+            <h3 class="text-xl font-bold text-white mb-3">포커 핸드 리뷰</h3>
+            <p class="text-gray-300 leading-relaxed">“플레이한 핸드를 업로드하면 스트리트별 액션과 팟 진행을 시각화해 분석합니다.
+              커뮤니티 피드백으로 더 나은 전략을 찾아보세요.”</p>
+          </div>
+        </div>
+
+        <!-- Feature 3 -->
+        <div class="group relative p-8 bg-white/5 backdrop-blur-md rounded-3xl border border-white/10 hover:bg-white/10 transition-all duration-500 hover:scale-105">
+          <div class="absolute inset-0 bg-gradient-to-r from-cyan-500/20 to-blue-500/20 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+          <div class="relative z-10">
+            <div class="w-14 h-14 bg-gradient-to-br from-cyan-500 to-cyan-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+              <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+              </svg>
+            </div>
+            <h3 class="text-xl font-bold text-white mb-3">포커 전략 공유</h3>
+            <p class="text-gray-300 leading-relaxed">“포지션, 스택, 상대 스타일에 따른 실전 전략을 공유하고 토론합니다.
+            차트와 예시 핸드로 이론을 바로 플레이에 적용하세요</p>
+          </div>
+        </div>
+
+        <!-- Feature 4 -->
+        <div class="group relative p-8 bg-white/5 backdrop-blur-md rounded-3xl border border-white/10 hover:bg-white/10 transition-all duration-500 hover:scale-105">
+          <div class="absolute inset-0 bg-gradient-to-r from-green-500/20 to-emerald-500/20 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+          <div class="relative z-10">
+            <div class="w-14 h-14 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+              <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
+              </svg>
+            </div>
+            <h3 class="text-xl font-bold text-white mb-3">커뮤니티 기능</h3>
+            <p class="text-gray-300 leading-relaxed">“전략 토론, 핸드 리뷰, 실시간 라운지 채팅까지.
+            주간 랭킹과 배지로 더 재미있게 참여하세요.”</p>
+          </div>
+        </div>
+
+        <!-- Feature 5 -->
+        <div class="group relative p-8 bg-white/5 backdrop-blur-md rounded-3xl border border-white/10 hover:bg-white/10 transition-all duration-500 hover:scale-105">
+          <div class="absolute inset-0 bg-gradient-to-r from-orange-500/20 to-red-500/20 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+          <div class="relative z-10">
+            <div class="w-14 h-14 bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+              <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM21 5a2 2 0 00-2-2h-4a2 2 0 00-2 2v12a4 4 0 004 4h4a2 2 0 002-2V5z"></path>
+              </svg>
+            </div>
+            <h3 class="text-xl font-bold text-white mb-3">대회 정보를 한눈에</h3>
+            <p class="text-gray-300 leading-relaxed">“전국 홀덤펍과 클럽의 토너먼트 일정을 실시간으로 제공합니다.
+              바이인, 구조, 시작 시간, 상금 규모까지 한눈에 확인하세요.”</p>
+          </div>
+        </div>
+
+        <!-- Feature 6 -->
+        <div class="group relative p-8 bg-white/5 backdrop-blur-md rounded-3xl border border-white/10 hover:bg-white/10 transition-all duration-500 hover:scale-105">
+          <div class="absolute inset-0 bg-gradient-to-r from-pink-500/20 to-rose-500/20 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+          <div class="relative z-10">
+            <div class="w-14 h-14 bg-gradient-to-br from-pink-500 to-pink-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+              <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path>
+              </svg>
+            </div>
+            <h3 class="text-xl font-bold text-white mb-3">홀덤 전략 영상</h3>
+            <p class="text-gray-300 leading-relaxed">“핵심 이론부터 실전 분석까지, 영상으로 배우는 포커 전략.
+            차트, 리플레이, 해설을 통해 빠르게 이해하고 플레이에 적용하세요.”</p>
+          </div>
+        </div>
+
+        <!-- Feature 7 - 새로운 카드 1 -->
+        <div class="group relative p-8 bg-white/5 backdrop-blur-md rounded-3xl border border-white/10 hover:bg-white/10 transition-all duration-500 hover:scale-105">
+          <div class="absolute inset-0 bg-gradient-to-r from-indigo-500/20 to-blue-500/20 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+          <div class="relative z-10">
+            <div class="w-14 h-14 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+              <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+              </svg>
+            </div>
+            <h3 class="text-xl font-bold text-white mb-3">실시간 통계 분석</h3>
+            <p class="text-gray-300 leading-relaxed">플레이 패턴을 자동으로 분석하여 VPIP, PFR, 3-Bet 등 핵심 지표를 제공합니다.
+            개인별 리포트와 트렌드로 실력 향상을 확인하세요.</p>
+          </div>
+        </div>
+
+        <!-- Feature 8 - 새로운 카드 2 -->
+        <div class="group relative p-8 bg-white/5 backdrop-blur-md rounded-3xl border border-white/10 hover:bg-white/10 transition-all duration-500 hover:scale-105">
+          <div class="absolute inset-0 bg-gradient-to-r from-teal-500/20 to-cyan-500/20 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+          <div class="relative z-10">
+            <div class="w-14 h-14 bg-gradient-to-br from-teal-500 to-teal-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+              <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+              </svg>
+            </div>
+            <h3 class="text-xl font-bold text-white mb-3">클락 기능</h3>
+            <p class="text-gray-300 leading-relaxed">홀덤펍에 필요한 최신 기술의 클락을 제공합니다. 포플의 최고의 기술력으로 제공되는 클락을 경험하세요.</p>
+          </div>
+        </div>
+
+        <!-- Feature 9 - 새로운 카드 3 -->
+        <div class="group relative p-8 bg-white/5 backdrop-blur-md rounded-3xl border border-white/10 hover:bg-white/10 transition-all duration-500 hover:scale-105">
+          <div class="absolute inset-0 bg-gradient-to-r from-yellow-500/20 to-orange-500/20 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+          <div class="relative z-10">
+            <div class="w-14 h-14 bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+              <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+            </div>
+            <h3 class="text-xl font-bold text-white mb-3">AI 포커 어시스턴트</h3>
+            <p class="text-gray-300 leading-relaxed">AI가 상황에 맞는 최적의 플레이를 제안합니다.
+            상대 패턴 분석과 팟 오즈 계산으로 더 정확한 결정을 내리세요.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Gallery / Cards -->
+  <section id="gallery" class="relative py-24 bg-gradient-to-b from-gray-900 to-slate-900 overflow-hidden">
+    <!-- Background Elements -->
+    <div class="absolute inset-0">
+      <div class="absolute top-10 right-20 w-72 h-72 bg-purple-500/10 rounded-full blur-3xl"></div>
+      <div class="absolute bottom-10 left-20 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl"></div>
+    </div>
+
+    <div class="relative z-10 max-w-7xl mx-auto px-4">
+      <!-- Section Header -->
+      <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between mb-16">
+        <div>
+          <div class="inline-flex items-center gap-2 px-4 py-2 bg-white/5 backdrop-blur-md rounded-full border border-white/10 text-white mb-6">
+            <div class="w-2 h-2 bg-purple-400 rounded-full animate-pulse"></div>
+            <span class="text-sm font-medium">이벤트</span>
+          </div>
+          <h2 class="text-4xl md:text-5xl font-black text-white leading-tight mb-4">
+            <span class="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">다양한 이벤트와</span>
+            <br>
+            <span class="text-white">활동들을 만나보세요</span>
+          </h2>
+          <p class="text-xl text-gray-300 max-w-2xl">
+            실제 포커 커뮤니티의 생생한 모습들을 확인하고 참여해보세요
+          </p>
+        </div>
+        <a href="#" class="hidden lg:inline-flex items-center gap-2 px-6 py-3 bg-white/10 backdrop-blur-md rounded-full border border-white/20 text-white hover:bg-white/20 transition-all duration-300 group">
+          <span>전체보기</span>
+          <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+          </svg>
+        </a>
+      </div>
+
+      <!-- Cards Grid: 이벤트가 동적으로 로드됩니다 -->
+      <div id="event-cards" class="events-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <!-- Events will be loaded dynamically by events.js -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact -->
+  <section id="contact" class="relative py-24 bg-gradient-to-b from-slate-900 to-black overflow-hidden">
+    <!-- Background Elements -->
+    <div class="absolute inset-0">
+      <div class="absolute top-20 left-1/4 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl"></div>
+      <div class="absolute bottom-20 right-1/4 w-64 h-64 bg-purple-500/10 rounded-full blur-3xl"></div>
+    </div>
+
+    <div class="relative z-10 max-w-4xl mx-auto px-4">
+      <!-- Section Header -->
+      <div class="text-center mb-16">
+        <div class="inline-flex items-center gap-2 px-4 py-2 bg-white/5 backdrop-blur-md rounded-full border border-white/10 text-white mb-6">
+          <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+          <span class="text-sm font-medium">문의하기</span>
+        </div>
+        <h2 class="text-4xl md:text-5xl font-black text-white leading-tight mb-6">
+          <span class="bg-gradient-to-r from-green-400 to-blue-400 bg-clip-text text-transparent">언제든 연락하세요</span>
+          <br>
+          <span class="text-white">함께 시작해요</span>
+        </h2>
+        <p class="text-xl text-gray-300 max-w-2xl mx-auto">
+          궁금한 점이나 참여 문의가 있으시면 언제든 메시지를 보내주세요
+        </p>
+      </div>
+
+      <!-- Contact Form -->
+      <div class="relative">
+        <div class="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-3xl blur-xl"></div>
+        <div class="relative bg-white/5 backdrop-blur-md rounded-3xl border border-white/10 p-8 lg:p-12">
+          <form id="contact-form" class="grid gap-6 sm:grid-cols-2">
+            <div class="sm:col-span-1">
+              <label class="block text-sm font-semibold text-white mb-3">이름</label>
+              <input type="text" 
+                     name="name"
+                     class="w-full rounded-2xl border-0 bg-white/10 backdrop-blur-md px-4 py-3 text-white placeholder-gray-400 focus:bg-white/20 focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-300" 
+                     placeholder="홍길동" 
+                     required />
+            </div>
+            <div class="sm:col-span-1">
+              <label class="block text-sm font-semibold text-white mb-3">이메일</label>
+              <input type="email" 
+                     name="email"
+                     class="w-full rounded-2xl border-0 bg-white/10 backdrop-blur-md px-4 py-3 text-white placeholder-gray-400 focus:bg-white/20 focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-300" 
+                     placeholder="you@example.com" 
+                     required />
+            </div>
+            <div class="sm:col-span-2">
+              <label class="block text-sm font-semibold text-white mb-3">메시지</label>
+              <textarea name="message"
+                        class="w-full rounded-2xl border-0 bg-white/10 backdrop-blur-md px-4 py-3 text-white placeholder-gray-400 focus:bg-white/20 focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-300 resize-none" 
+                        rows="6" 
+                        placeholder="PO+PLE 커뮤니티에 대해 궁금한 점이나 참여 희망 사항을 적어주세요." 
+                        required></textarea>
+            </div>
+            <div class="sm:col-span-2 flex flex-col sm:flex-row gap-4">
+              <button type="submit" 
+                      class="group relative flex-1 sm:flex-none px-8 py-4 bg-gradient-to-r from-green-500 to-blue-500 text-white font-bold rounded-2xl hover:shadow-2xl hover:shadow-green-500/25 transform hover:scale-105 transition-all duration-300">
+                <span class="relative z-10 flex items-center justify-center gap-2">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+                  </svg>
+                  메시지 보내기
+                </span>
+                <div class="absolute inset-0 bg-gradient-to-r from-green-600 to-blue-600 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              </button>
+              
+              <div class="flex items-center gap-4 text-gray-400 text-sm">
+                <div class="flex items-center gap-2">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                  </svg>
+                  24시간 내 답변
+                </div>
+                <div class="flex items-center gap-2">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                  </svg>
+                  개인정보 보호
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Contact Info -->
+      <div class="mt-16 grid md:grid-cols-3 gap-8">
+        <div class="text-center">
+          <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+            </svg>
+          </div>
+          <h3 class="text-lg font-bold text-white mb-2">이메일</h3>
+          <p class="text-gray-400">james@beaulead.co.kr</p>
+        </div>
+        
+        <div class="text-center">
+          <div class="w-16 h-16 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
+            </svg>
+          </div>
+          <h3 class="text-lg font-bold text-white mb-2">전화</h3>
+          <p class="text-gray-400">0507-1396-6602<br>1544-5238</p>
+        </div>
+        
+        <div class="text-center">
+          <div class="w-16 h-16 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+            </svg>
+          </div>
+          <h3 class="text-lg font-bold text-white mb-2">위치</h3>
+          <p class="text-gray-400">서울 강남구 테헤란로10길 18<br>하나빌딩 8층</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+
+  <!-- Footer -->
+  <footer class="bg-black border-t border-gray-800">
+    <div class="max-w-7xl mx-auto px-4 py-12">
+      <!-- Main Footer Content -->
+      <div class="grid md:grid-cols-4 gap-8 mb-8">
+        <!-- Brand Section -->
+        <div class="md:col-span-2">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center">
+              <span class="text-white font-black text-lg">P</span>
+            </div>
+            <span class="text-white font-bold text-xl">PO+PLE</span>
+          </div>
+          <p class="text-gray-400 leading-relaxed max-w-md">
+            포커 플레이어들을 위한 프리미엄 커뮤니티 플랫폼. 
+            전략 공유부터 토너먼트까지, 모든 것이 여기에 있습니다.
+          </p>
+          <div class="flex items-center gap-4 mt-6">
+            <a href="#" class="w-10 h-10 bg-white/10 hover:bg-white/20 rounded-xl flex items-center justify-center text-gray-400 hover:text-white transition-all duration-300">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/>
+              </svg>
+            </a>
+            <a href="#" class="w-10 h-10 bg-white/10 hover:bg-white/20 rounded-xl flex items-center justify-center text-gray-400 hover:text-white transition-all duration-300">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M22.46 6c-.77.35-1.6.58-2.46.69.88-.53 1.56-1.37 1.88-2.38-.83.5-1.75.85-2.72 1.05C18.37 4.5 17.26 4 16 4c-2.35 0-4.27 1.92-4.27 4.29 0 .34.04.67.11.98C8.28 9.09 5.11 7.38 3 4.79c-.37.63-.58 1.37-.58 2.15 0 1.49.75 2.81 1.91 3.56-.71 0-1.37-.2-1.95-.5v.03c0 2.08 1.48 3.82 3.44 4.21a4.22 4.22 0 0 1-1.93.07 4.28 4.28 0 0 0 4 2.98 8.521 8.521 0 0 1-5.33 1.84c-.34 0-.68-.02-1.02-.06C3.44 20.29 5.7 21 8.12 21 16 21 20.33 14.46 20.33 8.79c0-.19 0-.37-.01-.56.84-.6 1.56-1.36 2.14-2.23z"/>
+              </svg>
+            </a>
+            <a href="#" class="w-10 h-10 bg-white/10 hover:bg-white/20 rounded-xl flex items-center justify-center text-gray-400 hover:text-white transition-all duration-300">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 5.079 3.158 9.417 7.618 11.174-.105-.949-.199-2.403.041-3.439.219-.937 1.406-5.957 1.406-5.957s-.359-.72-.359-1.781c0-1.663.967-2.911 2.168-2.911 1.024 0 1.518.769 1.518 1.688 0 1.029-.653 2.567-.992 3.992-.285 1.193.6 2.165 1.775 2.165 2.128 0 3.768-2.245 3.768-5.487 0-2.861-2.063-4.869-5.008-4.869-3.41 0-5.409 2.562-5.409 5.199 0 1.033.394 2.143.889 2.741.099.12.112.225.085.345-.09.375-.293 1.199-.334 1.363-.053.225-.172.271-.402.165-1.495-.69-2.433-2.878-2.433-4.646 0-3.776 2.748-7.252 7.92-7.252 4.158 0 7.392 2.967 7.392 6.923 0 4.135-2.607 7.462-6.233 7.462-1.214 0-2.357-.629-2.758-1.378l-.749 2.848c-.269 1.045-1.004 2.352-1.498 3.146 1.123.345 2.306.535 3.55.535 6.624 0 11.99-5.367 11.99-11.99C24.007 5.367 18.641.001 12.017.001z"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+
+        <!-- Quick Links -->
+        <div>
+          <h3 class="text-white font-bold mb-4">빠른 링크</h3>
+          <ul class="space-y-3">
+            <li><a href="#home" class="text-gray-400 hover:text-white transition-colors duration-300">홈</a></li>
+            <li><a href="#features" class="text-gray-400 hover:text-white transition-colors duration-300">기능</a></li>
+            <li><a href="#gallery" class="text-gray-400 hover:text-white transition-colors duration-300">이벤트</a></li>
+            <li><a href="#contact" class="text-gray-400 hover:text-white transition-colors duration-300">문의</a></li>
+          </ul>
+        </div>
+
+        <!-- Legal -->
+        <div>
+          <h3 class="text-white font-bold mb-4">법적 고지</h3>
+          <ul class="space-y-3">
+            <li><a href="#" class="text-gray-400 hover:text-white transition-colors duration-300">이용약관</a></li>
+            <li><a href="#" class="text-gray-400 hover:text-white transition-colors duration-300">개인정보처리방침</a></li>
+            <li><a href="#" class="text-gray-400 hover:text-white transition-colors duration-300">쿠키 정책</a></li>
+            <li><a href="#" class="text-gray-400 hover:text-white transition-colors duration-300">고객지원</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Bottom Bar -->
+      <div class="pt-8 border-t border-gray-800">
+        <!-- Company Info -->
+        <div class="mb-6 text-center md:text-left">
+          <p class="text-gray-400 text-sm mb-2">
+            <strong class="text-white">(주)뷰리드</strong> | 대표이사 박현구
+          </p>
+          <p class="text-gray-400 text-sm mb-2">
+            사업자번호 390-85-02849 | Tel 0507-1396-6602 | Tel 1544-5238 | Fax 070-8255-8396
+          </p>
+          <p class="text-gray-400 text-sm">
+            주소: 서울 강남구 테헤란로10길 18 하나빌딩 8층 | 이메일: james@beaulead.co.kr
+          </p>
+        </div>
+        
+        <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+          <p class="text-gray-400 text-sm">
+            © <span id="year"></span> PO+PLE. All rights reserved.
+          </p>
+          <div class="flex items-center gap-6 text-sm text-gray-400">
+            <span>🇰🇷 한국어</span>
+            <span>•</span>
+            <span>Version 1.0</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // 모바일 메뉴 토글
+    const menuBtn = document.getElementById('menuBtn');
+    const mobileMenu = document.getElementById('mobileMenu');
+    menuBtn?.addEventListener('click', () => {
+      mobileMenu.classList.toggle('hidden');
+    });
+    
+    // 푸터 연도
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // 중복된 이벤트 로딩 시스템 제거 - events.js가 담당
+  </script>
+
+  <!-- Events Management Script -->
+  <script src="events.js"></script>
+  <script src="/js/load-more.js"></script>
+  <script src="/js/contact.js"></script>
+</body>
+</html>

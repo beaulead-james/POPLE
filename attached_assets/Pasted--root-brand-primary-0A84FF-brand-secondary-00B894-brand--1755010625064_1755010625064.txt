@@ -1,0 +1,58 @@
+:root{
+  --brand-primary:#0A84FF;   /* 포인트 블루 */
+  --brand-secondary:#00B894; /* 서브 그린 */
+  --brand-accent:#FF9F43;    /* 강조 오렌지 */
+  --bg-body:#F7F9FC;
+  --text-strong:#0F172A;
+  --text-muted:#6B7280;
+  --line:#E5E7EB;
+}
+
+html,body{ color:var(--text-strong); background:var(--bg-body); }
+
+/* 공통 컴포넌트 */
+.btn-primary{
+  background:var(--brand-primary); color:#fff; font-weight:700; border-radius:12px;
+  padding:10px 16px; box-shadow:0 8px 20px rgba(10,132,255,.18);
+  transition:transform .06s ease, box-shadow .2s ease, background .2s ease;
+}
+.btn-primary:hover{ transform:translateY(-1px); box-shadow:0 12px 26px rgba(10,132,255,.26); }
+
+.btn-ghost{
+  background:#fff; border:1px solid var(--line); color:var(--text-strong);
+  border-radius:12px; padding:10px 16px;
+}
+.input, .select{
+  background:#fff; border:1px solid var(--line); border-radius:12px; padding:10px 12px;
+}
+.input:focus, .select:focus{
+  outline:none; box-shadow:0 0 0 4px rgba(10,132,255,.15); border-color:var(--brand-primary);
+}
+
+.badge{ display:inline-flex; align-items:center; gap:6px; font-weight:700;
+  padding:4px 10px; border-radius:999px; font-size:12px;
+}
+.badge--published{ background:rgba(10,132,255,.08); color:var(--brand-primary); }
+.badge--draft{ background:rgba(255,159,67,.14); color:#B25B00; }
+.badge--archived{ background:#F3F4F6; color:#6B7280; }
+
+/* 테이블 */
+.table{
+  background:#fff; border:1px solid var(--line); border-radius:16px; overflow:hidden;
+}
+.table thead th{
+  background:#FBFCFE; color:#4B5563; font-weight:700; padding:14px 16px; border-bottom:1px solid var(--line);
+}
+.table tbody td{ padding:14px 16px; border-bottom:1px solid var(--line); }
+.table tbody tr:hover{ background:#FAFAFF; }
+
+/* 사이드바 */
+.sidebar{
+  background:#fff; border-right:1px solid var(--line);
+}
+.sidebar .logo{ font-weight:900; letter-spacing:-.02em; }
+.sidebar a.active{ background:rgba(10,132,255,.10); color:var(--brand-primary); border-radius:12px; }
+
+/* 섹션 타이틀 */
+.section-title{ font-size:28px; font-weight:900; letter-spacing:-.02em; }
+.section-sub{ color:var(--text-muted); }
